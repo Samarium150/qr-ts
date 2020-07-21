@@ -1,6 +1,7 @@
 # Copied from https://github.com/github/gitignore/blob/master/Node.gitignore
 .idea
 package-lock.json
+dummy.js
 
 # Logs
 logs
