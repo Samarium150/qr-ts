@@ -26,14 +26,6 @@ var CodePoint = /** @class */ (function () {
         }
         return utf8;
     };
-    CodePoint.generate = function (str) {
-        var result = [];
-        for (var _i = 0, str_1 = str; _i < str_1.length; _i++) {
-            var codePoint = str_1[_i];
-            result.push(new CodePoint(codePoint));
-        }
-        return result;
-    };
     return CodePoint;
 }());
 exports.default = CodePoint;

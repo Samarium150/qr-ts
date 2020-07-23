@@ -9,7 +9,7 @@ export default class CodePoint {
     }
 
     // source: https://gist.github.com/joni/3760795#file-toutf8array-js
-    public static toUTF8Array(str: string): Array<number> {
+    private static toUTF8Array(str: string): Array<number> {
         const utf8: Array<number> = [];
         for (let i = 0; i < str.length; i++) {
             let char_code: number = str.charCodeAt(i);
@@ -33,11 +33,5 @@ export default class CodePoint {
             }
         }
         return utf8;
-    }
-
-    public static generate(str: string): Array<CodePoint> {
-        const result: Array<CodePoint> = [];
-        for(const codePoint of str) result.push(new CodePoint(codePoint));
-        return result
     }
 }
