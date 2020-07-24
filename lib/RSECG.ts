@@ -12,12 +12,10 @@ export default class RSECG {
         for (let i = 0; i < degree; i++) {
             for (let j = 0; j < coefs.length; j++) {
                 coefs[j] = RSECG.multiply(coefs[j], root);
-                //console.log(coefs[j]);
                 if (j + 1 < coefs.length) coefs[j] ^= coefs[j + 1];
             }
             root = RSECG.multiply(root, 0x02);
         }
-        //console.log("initialized");
     }
 
     private static multiply(a: number, b: number): number {

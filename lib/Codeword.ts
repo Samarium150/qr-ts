@@ -1,4 +1,5 @@
 abstract class Codeword {
+
     protected pre_interleave_index: number = -1;
     protected block_index: number = -1;
     protected index: number = -1;
@@ -20,6 +21,7 @@ abstract class Codeword {
 }
 
 class DataCodeword extends Codeword {
+
     private pre_ec_index: number = -1;
 
     constructor(value: number) {

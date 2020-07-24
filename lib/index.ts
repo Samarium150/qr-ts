@@ -5,7 +5,9 @@ import * as types from "./types"
 import {utils} from "./utils";
 import CodePoint from "./CodePoint";
 import Segment from "./Segment"
-import {DataCodeword} from "./Codeword"
+import {Codeword, DataCodeword} from "./Codeword"
+import QR from "./QR";
+import {Module} from "./Module";
 
 export namespace app {
 
@@ -25,12 +27,24 @@ export namespace app {
         return utils.computeOptimalVersion(segments, version, ecl);
     }
 
-    export function getDataCodeword(segments: Array<Segment>, version: number) {
-        return utils.generateDataCodeword(segments, version);
+    export function getDataCodeword(segments: Array<Segment>, version: number, ecl: types.Ecl) {
+        return utils.generateDataCodeword(segments, version, ecl);
     }
     
     export function getCodeword(data: Array<DataCodeword>, version: number, ecl: types.Ecl) {
         return utils.generateCodeword(data, version, ecl);
+    }
+
+    export function initQR(version: number, ecl: types.Ecl): QR {
+        return new QR(version, ecl);
+    }
+
+    export function drawQR(qr: QR) {
+        console.log(qr.modules.map(row => row.map(module => module.getColor() ? 1 : 0).join("  ")).join("\n"));
+    }
+
+    export function getRawQR(data: Array<Codeword>, version: number, ecl: types.Ecl) {
+        return utils.generateRawQR(data, version, ecl);
     }
 
 }

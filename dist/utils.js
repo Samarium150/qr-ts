@@ -28,6 +28,7 @@ var Segment_1 = __importDefault(require("./Segment"));
 var CodePoint_1 = __importDefault(require("./CodePoint"));
 var Codeword_1 = require("./Codeword");
 var RSECG_1 = __importDefault(require("./RSECG"));
+var QR_1 = __importDefault(require("./QR"));
 var utils;
 (function (utils) {
     function computeModeCharCount(mode, version) {
@@ -171,13 +172,27 @@ var utils;
     }
     utils.computeOptimalVersion = computeOptimalVersion;
     // Step 4
-    function generateDataCodeword(segments, version) {
+    function generateDataCodeword(segments, version, ecl) {
         var result = [], bits = [];
         segments.forEach(function (segment) {
             utils.decToBin(constants.MODE[segment.mode].indicator, 4).forEach(function (bit) { return bits.push(bit); });
             utils.decToBin(segment.char_len, utils.computeModeCharCount(segment.mode, version)).forEach(function (bit) { return bits.push(bit); });
             segment.data.forEach(function (bit) { return bits.push(bit); });
         });
+        var capacity = getCapacity(version, ecl);
+        // Terminator padding
+        [0, 0, 0, 0].slice(0, Math.min(4, capacity - bits.length)).forEach(function (bit) { return bits.push(bit); });
+        // Bit padding
+        [0, 0, 0, 0, 0, 0, 0].slice(0, (8 - bits.length % 8) % 8).forEach(function (bit) { return bits.push(bit); });
+        // Byte padding
+        var pad = [];
+        for (var i = 0, n = (capacity - bits.length) / 8; i < n; i++) {
+            if (i % 2 == 0)
+                pad.push(1, 1, 1, 0, 1, 1, 0, 0);
+            else
+                pad.push(0, 0, 0, 1, 0, 0, 0, 1);
+        }
+        pad.forEach(function (bit) { return bits.push(bit); });
         for (var i = 0; i < bits.length; i += 8) {
             var codeword = new Codeword_1.DataCodeword(parseInt(bits.slice(i, i + 8).join(""), 2));
             codeword.setPreEcIndex(i / 8);
@@ -269,4 +284,12 @@ var utils;
         return interleaveBlocks(data_blocks, ec_blocks);
     }
     utils.generateCodeword = generateCodeword;
+    // Step 6
+    function generateRawQR(data, version, ecl) {
+        var qr = new QR_1.default(version, ecl);
+        var path = qr.generateDataPath();
+        qr.placeCodeword(data, path);
+        return qr;
+    }
+    utils.generateRawQR = generateRawQR;
 })(utils = exports.utils || (exports.utils = {}));

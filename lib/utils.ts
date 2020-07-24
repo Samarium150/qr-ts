@@ -4,6 +4,7 @@ import Segment from "./Segment";
 import CodePoint from "./CodePoint";
 import {Codeword, DataCodeword, EcCodeword} from "./Codeword";
 import RSECG from "./RSECG";
+import QR from "./QR";
 
 export namespace utils {
 
@@ -21,7 +22,7 @@ export namespace utils {
     
     export function decToBin(n: number, length: number): Array<number> {
         if (length < 0 || length > 31 || n >>> length != 0) throw Error("Value Error");
-        let result: Array<number> = [];
+        const result: Array<number> = [];
         for (let i = length - 1; i >= 0; i--) result.push((n >>> i) & 1);
         return result;
     }
@@ -141,13 +142,29 @@ export namespace utils {
     }
 
     // Step 4
-    export function generateDataCodeword(segments: Array<Segment>, version: number): Array<DataCodeword> {
+    export function generateDataCodeword(segments: Array<Segment>, version: number, ecl: types.Ecl): Array<DataCodeword> {
         const result: Array<DataCodeword> = [], bits: Array<number> = [];
         segments.forEach(segment => {
             utils.decToBin(constants.MODE[segment.mode].indicator, 4).forEach(bit => bits.push(bit));
             utils.decToBin(segment.char_len, utils.computeModeCharCount(segment.mode, version)).forEach(bit => bits.push(bit));
             segment.data.forEach(bit => bits.push(bit));
         });
+        const capacity = getCapacity(version, ecl);
+
+        // Terminator padding
+        [0, 0, 0, 0].slice(0, Math.min(4, capacity - bits.length)).forEach(bit => bits.push(bit));
+
+        // Bit padding
+        [0, 0, 0, 0, 0, 0, 0].slice(0, (8 - bits.length % 8) % 8).forEach(bit => bits.push(bit));
+
+        // Byte padding
+        const pad: Array<number> = [];
+        for (let i = 0, n = (capacity - bits.length) / 8; i < n; i++) {
+            if (i % 2 == 0) pad.push(1, 1, 1, 0, 1, 1, 0, 0);
+            else pad.push(0, 0, 0, 1, 0, 0, 0, 1);
+        }
+        pad.forEach(bit => bits.push(bit));
+
         for (let i = 0; i < bits.length; i += 8) {
             const codeword = new DataCodeword(parseInt(bits.slice(i, i + 8).join(""), 2));
             codeword.setPreEcIndex(i / 8);
@@ -229,5 +246,13 @@ export namespace utils {
         const data_blocks: Array<Array<DataCodeword>> = splitData(data, version, ecl);
         const ec_blocks: Array<Array<EcCodeword>> = generateEcCodeword(data_blocks, version, ecl);
         return interleaveBlocks(data_blocks, ec_blocks);
+    }
+    
+    // Step 6
+    export function generateRawQR(data: Array<Codeword>, version: number, ecl: types.Ecl): QR {
+        const qr = new QR(version, ecl);
+        const path = qr.generateDataPath();
+        qr.placeCodeword(data, path);
+        return qr;
     }
 }
