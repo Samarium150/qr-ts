@@ -40,11 +40,19 @@ export namespace app {
     }
 
     export function drawQR(qr: QR) {
-        console.log(qr.modules.map(row => row.map(module => module.getColor() ? 1 : 0).join("  ")).join("\n"));
+        console.log(qr.modules.map(row => row.map(module => module.getColor() ? 1 : 0).join("  ")).join("\n"), "\n");
     }
 
     export function getRawQR(data: Array<Codeword>, version: number, ecl: types.Ecl) {
         return utils.generateRawQR(data, version, ecl);
+    }
+
+    export function getMasks(qr: QR) {
+        return qr.generateAllMasks();
+    }
+
+    export function getOptimalMask(qr: QR) {
+        return utils.computeOptimalMask(qr);
     }
 
 }

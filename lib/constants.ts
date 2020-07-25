@@ -211,10 +211,10 @@ const VERSION_INFO = [
 ]
 
 const PENALTIES = {
-    N1: 3,
-    N2: 3,
-    N3: 40,
-    N4: 10
+    S1: 3,
+    S2: 3,
+    S3: 40,
+    S4: 10
 }
 
 export {

@@ -1,4 +1,4 @@
-abstract class Codeword {
+class Codeword {
 
     protected pre_interleave_index: number = -1;
     protected block_index: number = -1;

@@ -1,5 +1,6 @@
 import * as constants from "./constants";
 import * as types from "./types";
+import * as _ from "lodash";
 import Segment from "./Segment";
 import CodePoint from "./CodePoint";
 import {Codeword, DataCodeword, EcCodeword} from "./Codeword";
@@ -149,7 +150,7 @@ export namespace utils {
             utils.decToBin(segment.char_len, utils.computeModeCharCount(segment.mode, version)).forEach(bit => bits.push(bit));
             segment.data.forEach(bit => bits.push(bit));
         });
-        const capacity = getCapacity(version, ecl);
+        const capacity = getCapacity(version, ecl) * 8;
 
         // Terminator padding
         [0, 0, 0, 0].slice(0, Math.min(4, capacity - bits.length)).forEach(bit => bits.push(bit));
@@ -251,8 +252,29 @@ export namespace utils {
     // Step 6
     export function generateRawQR(data: Array<Codeword>, version: number, ecl: types.Ecl): QR {
         const qr = new QR(version, ecl);
+        qr.initialize();
         const path = qr.generateDataPath();
         qr.placeCodeword(data, path);
         return qr;
+    }
+
+    // Step 7
+    export function computeOptimalMask(qr: QR): [number, QR] {
+        const masks: Array<QR> = qr.generateAllMasks();
+        const values: Array<number> = masks.map((mask, index) => {
+            // TODO: find another way to deep copy
+            const copy = _.cloneDeep(qr);
+            copy.applyMask(mask);
+            copy.drawFormatPatterns(index);
+            return copy.computePenalty();
+        });
+        const which: number = values.indexOf(Math.min(...values));
+        return [which, masks[which]];
+    }
+
+    // Step 8
+    export function generateQR(qr: QR, mask: [number, QR]) {
+        qr.applyMask(mask[1]);
+        qr.drawFormatPatterns(mask[0]);
     }
 }

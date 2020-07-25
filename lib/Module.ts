@@ -9,7 +9,9 @@ class Module {
     public getColor(): boolean {return this.color;}
 }
 
-class FunctionalModule extends Module{
+class DataModule extends Module {}
+
+class FunctionalModule extends Module {
 
     private readonly type: types.Function;
 
@@ -22,5 +24,11 @@ class FunctionalModule extends Module{
     public getType(): types.Function {return this.type;}
 }
 
+class MaskModule extends Module {
+    constructor(color: boolean) {
+        super();
+        this.color = color;
+    }
+}
 
-export {Module, FunctionalModule};
+export {Module, DataModule, FunctionalModule, MaskModule};
