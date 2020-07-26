@@ -1,6 +1,6 @@
 import * as types from "./types";
 import * as constants from "./constants";
-import {Module, DataModule, FunctionalModule, MaskModule} from "./Module";
+import {DataModule, FunctionalModule, MaskModule, Module, QuietModule} from "./Module";
 import {Codeword} from "./Codeword";
 
 enum ecls {LOW, MEDIUM, QUARTILE, HIGH}
@@ -10,7 +10,7 @@ export default class QR {
     private readonly version: number;
     private readonly ecl: types.Ecl;
     private readonly size: number;
-    private readonly modules: Array<Array<Module>> = [];
+    private modules: Array<Array<Module>> = [];
 
     constructor(version: number, ecl: types.Ecl) {
         this.version = version;
@@ -33,7 +33,7 @@ export default class QR {
     public getModules(): Array<Array<Module>> {return this.modules;}
 
     public toString(): string {
-        return this.modules.map(row => row.map(module => module.getColor() ? 1 : 0).join("  ")).join("\n");
+        return this.modules.map(row => row.map(module => module.getColor() ? 1 : 0).join(" ")).join("\n");
     }
 
     public initialize(): void {
@@ -291,5 +291,26 @@ export default class QR {
         }
         p4 = Math.min(Math.abs(a - 50), Math.abs(b - 50)) * constants.PENALTIES.S4;
         return p1 + p2 + p3 + p4;
+    }
+
+    private generateQuietRows(): Array<Array<QuietModule>> {
+        const result: Array<Array<QuietModule>> = [];
+        for (let i: number = 0; i < 4; i++) {
+            const row: Array<Module> = [];
+            for (let j: number = 0; j < this.size + 8; j++) row.push(new QuietModule());
+            result.push(row);
+        }
+        return result;
+    }
+
+    public extend(): void {
+        const pre: Array<Array<Module>> = this.generateQuietRows();
+        for (let i: number = 0; i < this.size; i++) {
+            const row: Array<Module> = [];
+            for (let j: number = -4; j < this.size + 4; j++)
+                (j < 0 || j > this.size - 1) ? row.push(new QuietModule()) : row.push(this.modules[i][j]);
+            pre.push(row);
+        }
+        this.modules = pre.concat(this.generateQuietRows());
     }
 }

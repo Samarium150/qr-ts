@@ -21,3 +21,6 @@
     flex: 2;
     background-color: lightskyblue;
 }
+#output {
+    margin: 5px;
+}

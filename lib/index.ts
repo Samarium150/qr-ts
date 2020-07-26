@@ -7,6 +7,7 @@ import CodePoint from "./CodePoint";
 import Segment from "./Segment"
 import {Codeword, DataCodeword} from "./Codeword"
 import QR from "./QR";
+import {Module} from "./Module";
 
 export namespace app {
 
@@ -35,6 +36,23 @@ export namespace app {
         const code: QR = utils.generateRawQR(codeword, optimalVersion, ecl);
         const optimalMask: [number, QR] = (mask == -1) ? utils.computeOptimalMask(code) : [mask, code.generateMask(mask)];
         utils.generateQR(code, optimalMask);
-        return code.toString();
+        code.extend(); // Changeable
+        const output: HTMLCanvasElement = document.createElement("canvas");
+        output.id = "output";
+        const context: CanvasRenderingContext2D = output.getContext("2d")!;
+        const numBlock: number = code.getSize() + 8;
+        const size: number = 10; // Changeable
+        const edge: number = numBlock * size;
+        output.width = edge;
+        output.height = edge;
+        const modules: Array<Array<Module>> = code.getModules();
+        for (let row: number = 0; row < numBlock; row++) {
+            for (let col: number = 0; col < numBlock; col++) {
+                context.fillStyle = (modules[row][col].getColor()) ? "#000000" : "#FFFFFF"; // Changeable
+                context.fillRect(col * size, row * size, size, size);
+            }
+        }
+        context.stroke();
+        return output;
     }
 }

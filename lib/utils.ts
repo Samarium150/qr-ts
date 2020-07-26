@@ -9,7 +9,7 @@ import QR from "./QR";
 
 export namespace utils {
 
-    export function computeModeCharCount(mode: types.Mode, version: number): number {
+    function computeModeCharCount(mode: types.Mode, version: number): number {
         return (0 < version && version <= 40) ? constants.MODE[mode].charCount[Math.floor((version + 7) / 17)] : -1;
     }
     
@@ -21,14 +21,14 @@ export namespace utils {
         return constants.NUMERIC.indexOf(char) != -1;
     }
     
-    export function decToBin(n: number, length: number): Array<number> {
+    function decToBin(n: number, length: number): Array<number> {
         if (length < 0 || length > 31 || n >>> length != 0) throw Error("Value Error");
         const result: Array<number> = [];
         for (let i = length - 1; i >= 0; i--) result.push((n >>> i) & 1);
         return result;
     }
 
-    export function computeNumRawCodeword(version: number): number {
+    function computeNumRawCodeword(version: number): number {
         let result: number = (16 * version + 128) * version + 64;
         if (version >= 2) {
             const align: number = Math.floor(version / 7) + 2;
@@ -38,29 +38,29 @@ export namespace utils {
         return Math.floor(result / 8);
     }
     
-    export function getNumEcCodeword(version: number, ecl: types.Ecl): number {
+    function getNumEcCodeword(version: number, ecl: types.Ecl): number {
         return constants.EC_CODEWORD_PER_BLOCK[constants.ECL[ecl].ordinal][version];
     }
     
-    export function getNumEcBlocks(version: number, ecl: types.Ecl): number {
+    function getNumEcBlocks(version: number, ecl: types.Ecl): number {
         return constants.NUM_EC_BLOCK[constants.ECL[ecl].ordinal][version];
     }
     
-    export function getCapacity(version: number, ecl: types.Ecl): number {
+    function getCapacity(version: number, ecl: types.Ecl): number {
         return constants.CAPACITY[version][constants.ECL[ecl].ordinal];
     }
 
-    export function computeBitsLength(segments: Array<Segment>, version: number): number {
+    function computeBitsLength(segments: Array<Segment>, version: number): number {
         let result: number = 0;
         for (const segment of segments) {
-            const modeCharCountBits: number = utils.computeModeCharCount(segment.getMode(), version);
+            const modeCharCountBits: number = computeModeCharCount(segment.getMode(), version);
             if (segment.getCharLen() >= (1 << modeCharCountBits)) throw Error("Cannot Encode");
             result += modeCharCountBits + segment.getData().length + 4;
         }
         return result;
     }
 
-    export function computeNumCodewords(segments: Array<Segment>, version: number): number {
+    function computeNumCodewords(segments: Array<Segment>, version: number): number {
         return Math.ceil(computeBitsLength(segments, version) / 8);
     }
 
@@ -117,7 +117,7 @@ export namespace utils {
         return new Segment(mode, len, data);
     }
 
-    function generateSegmentsFromMultiModes(points: Array<CodePoint>, modes: Array<types.Mode>): Array<Segment> {
+    export function generateSegmentsFromMultiModes(points: Array<CodePoint>, modes: Array<types.Mode>): Array<Segment> {
         // TODO: implement
         return [];
     }
@@ -150,8 +150,8 @@ export namespace utils {
     export function generateDataCodeword(segments: Array<Segment>, version: number, ecl: types.Ecl): Array<DataCodeword> {
         const result: Array<DataCodeword> = [], bits: Array<number> = [];
         segments.forEach(segment => {
-            utils.decToBin(constants.MODE[segment.getMode()].indicator, 4).forEach(bit => bits.push(bit));
-            utils.decToBin(segment.getCharLen(), utils.computeModeCharCount(segment.getMode(), version)).forEach(bit => bits.push(bit));
+            decToBin(constants.MODE[segment.getMode()].indicator, 4).forEach(bit => bits.push(bit));
+            decToBin(segment.getCharLen(), computeModeCharCount(segment.getMode(), version)).forEach(bit => bits.push(bit));
             segment.getData().forEach(bit => bits.push(bit));
         });
         const capacity: number = getCapacity(version, ecl) * 8;

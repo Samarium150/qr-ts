@@ -1,9 +1,9 @@
 'use strict'
 let text, version = 1, ecl = "LOW", forced = false, mask = -1;
 
-qr.app.debug("example");
+// qr.app.debug("example");
 const form = document.getElementById("QR");
-const output = document.getElementById("output");
+const main = document.getElementById("main");
 
 form.onchange = event => {
     const value = event.target.value;
@@ -17,11 +17,14 @@ form.onchange = event => {
     }
 }
 
-form.onsubmit = event => {
-    console.log(text, version, ecl, forced, mask);
+form.onsubmit = _ => {
+    // console.log(text, version, ecl, forced, mask);
     try {
+        // load library before usage
         const code = qr.app.generate(text, version, ecl, forced, mask);
-        console.log(code);
+        const prev = document.getElementById("output");
+        if (prev != null) prev.replaceWith(code);
+        else main.appendChild(code);
     } catch (e) {
         console.log(e);
     }

@@ -30,9 +30,12 @@ class MaskModule extends Module {
     }
 }
 
+class QuietModule extends Module {}
+
 export {
     Module,
     DataModule,
     FunctionalModule,
-    MaskModule
+    MaskModule,
+    QuietModule
 };
