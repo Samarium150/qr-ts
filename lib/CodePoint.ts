@@ -1,7 +1,7 @@
 export default class CodePoint {
 
-    public readonly utf16_char: string;
-    public readonly utf8_code: Array<number>;
+    private readonly utf16_char: string;
+    private readonly utf8_code: Array<number>;
 
     constructor(codePoint: string) {
         this.utf16_char = codePoint;
@@ -34,4 +34,7 @@ export default class CodePoint {
         }
         return utf8;
     }
+
+    public getChar(): string {return this.utf16_char;}
+    public getCode(): Array<number> {return this.utf8_code;}
 }

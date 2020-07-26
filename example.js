@@ -1,40 +1,29 @@
 'use strict'
-const qr = require("./dist/bundle");
+let text, version = 1, ecl = "LOW", forced = false, mask = -1;
 
-qr.app.debug("test");
+qr.app.debug("example");
+const form = document.getElementById("QR");
+const output = document.getElementById("output");
 
-const test = "HELLO WORLD"
-
-const points = qr.app.getCodePoints(test);
-console.log(`code points length: ${points.length}`);
-
-const segments = [qr.app.getSegments(points, "ALPHANUMERIC")];
-console.log(`segment data bits length: ${segments[0].data.length}`);
-const d = segments[0].data.map(n => n.toString()).join("");
-const a = [];
-for (let i = 0; i < d.length; i += 8) {
-    a.push(parseInt(d.substring(i, i+8), 2).toString(16).padStart(2, "0"));
+form.onchange = event => {
+    const value = event.target.value;
+    switch (event.target.name) {
+        case "text": text = value; break;
+        case "version": version = parseInt(value); break;
+        case "ecl": ecl = value; break;
+        case "forced": forced = value === "on"; break;
+        case "mask": mask = parseInt(value); break;
+        default: throw Error("Invalid Form Input");
+    }
 }
-console.log(a.join(" "));
 
-const ecl = "QUARTILE"
-const version = qr.app.computeVersion(segments, 1, ecl);
-console.log(`version: ${version}, Ec level: ${ecl}`);
-
-const dataCodewords = qr.app.getDataCodeword(segments, version, ecl);
-console.log(`data codeword length: ${dataCodewords.length}`);
-console.log(dataCodewords.map(dataCodeword => dataCodeword.value.toString(16).padStart(2, "0")).join(" "));
-
-const codewords = qr.app.getCodeword(dataCodewords, version, ecl);
-console.log(codewords.map((codeword, index) => `index: ${index} value: ${codeword.value.toString(16).padStart(2, "0")}`).join("\n"));
-
-const rawCode = qr.app.getRawQR(codewords, version, ecl);
-qr.app.drawQR(rawCode);
-rawCode.applyMask(rawCode.generateMask(0));
-rawCode.drawFormatPatterns(0);
-console.log(rawCode.computePenalty());
-qr.app.drawQR(rawCode);
-// const code = qr.app.initQR(version, ecl);
-// code.initialize();
-// code.drawFormatPatterns(0);
-// qr.app.drawQR(code);
+form.onsubmit = event => {
+    console.log(text, version, ecl, forced, mask);
+    try {
+        const code = qr.app.generate(text, version, ecl, forced, mask);
+        console.log(code);
+    } catch (e) {
+        console.log(e);
+    }
+    return false;
+}

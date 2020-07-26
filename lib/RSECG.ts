@@ -1,14 +1,15 @@
 export default class RSECG {
+
     private readonly coefficients: Array<number> = [];
 
     constructor(degree: number) {
         if (degree < 1 || degree > 255) throw Error("Degree out of range");
-        let coefs = this.coefficients;
+        let coefs: Array<number> = this.coefficients;
 
         for (let i = 0; i < degree - 1; i++) coefs.push(0);
         coefs.push(1);
 
-        let root = 1;
+        let root: number = 1;
         for (let i = 0; i < degree; i++) {
             for (let j = 0; j < coefs.length; j++) {
                 coefs[j] = RSECG.multiply(coefs[j], root);

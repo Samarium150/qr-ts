@@ -4,8 +4,7 @@ class Module {
 
     protected color: boolean = false;
 
-    public setColor(value: boolean) {this.color = value;}
-
+    public setColor(value: boolean): void {this.color = value;}
     public getColor(): boolean {return this.color;}
 }
 
@@ -31,4 +30,9 @@ class MaskModule extends Module {
     }
 }
 
-export {Module, DataModule, FunctionalModule, MaskModule};
+export {
+    Module,
+    DataModule,
+    FunctionalModule,
+    MaskModule
+};

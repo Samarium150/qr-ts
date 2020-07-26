@@ -11,13 +11,10 @@ class Codeword {
         this.value = value;
     }
 
-    public setBlockIndex(value: number) {this.block_index = value;}
-
-    public setIndex(value: number) {this.index = value;}
-
-    public setPreInterleaveIndex(value: number) {this.pre_interleave_index = value;}
-
-    public setPostInterleaveIndex(value: number) {this.post_interleave_index = value;}
+    public setBlockIndex(value: number): void {this.block_index = value;}
+    public setIndex(value: number): void {this.index = value;}
+    public setPreInterleaveIndex(value: number): void {this.pre_interleave_index = value;}
+    public setPostInterleaveIndex(value: number): void {this.post_interleave_index = value;}
 }
 
 class DataCodeword extends Codeword {
@@ -28,7 +25,7 @@ class DataCodeword extends Codeword {
         super(value);
     }
 
-    public setPreEcIndex(n: number) {
+    public setPreEcIndex(n: number): void {
         this.pre_ec_index = n;
     }
 }
@@ -39,4 +36,8 @@ class EcCodeword extends Codeword {
     }
 }
 
-export {Codeword, DataCodeword, EcCodeword};
+export {
+    Codeword,
+    DataCodeword,
+    EcCodeword
+};

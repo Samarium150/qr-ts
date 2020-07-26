@@ -23,16 +23,20 @@ module.exports = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
-        library: 'qr',
-        libraryTarget: 'commonjs2'
+        library: {
+            root: 'qr',
+            commonjs: "qr-lib"
+        },
+        libraryTarget: 'umd'
     },
     externals: {
         lodash: {
+            root: '_',
             commonjs: 'lodash',
             commonjs2: 'lodash'
         }
     },
     optimization: {
-        minimize: true
+        minimize: false
     }
 };

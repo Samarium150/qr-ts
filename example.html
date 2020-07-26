@@ -2,9 +2,44 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Generate Beautiful QR Code</title>
+        <title>Generate QR Code</title>
+        <link rel="stylesheet" type="text/css" href="example.css">
     </head>
     <body>
-        <script type="application/javascript" src="example.js"></script>
+        <div class="container">
+            <div class="frame placeholder"></div>
+            <div class="frame center">
+                <p id="title">Example</p>
+                <form id="QR">
+                    <label for="input">Text For Encoding:</label><br>
+                    <input type="text" id="input" name="text" required><br><br>
+
+                    <label for="version">Minimum Version:</label><br>
+                    <input type="number" id="version" name="version" value="1" min="1" max="40"><br>
+                    <input type="checkbox" id="forced" name="forced">
+                    <label for="forced">force this version</label><br><br>
+
+                    <label>Error Correction Level:</label><br>
+                    <input type="radio" name="ecl" id="low" value="LOW" checked>
+                    <label for="low">LOW</label>
+                    <input type="radio" name="ecl" id="medium" value="MEDIUM">
+                    <label for="medium">MEDIUM</label>
+                    <input type="radio" name="ecl" id="quartile" value="QUARTILE">
+                    <label for="quartile">QUARTILE</label>
+                    <input type="radio" name="ecl" id="high" value="HIGH">
+                    <label for="high">HIGH</label><br><br>
+
+                    <label for="mask">Mask Pattern: (-1 for auto)</label><br>
+                    <input type="number" id="mask" name="mask" value="-1" min="-1" max="7"><br><br>
+
+                    <input type="submit" value="Generate QR Code">
+                </form>
+            </div>
+            <div class="frame placeholder"></div>
+        </div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/lodash@4.17.19/lodash.min.js"></script>
+        <script defer src="dist/bundle.js"></script>
+        <script defer src="example.js"></script>
     </body>
 </html>

@@ -7,10 +7,10 @@ enum ecls {LOW, MEDIUM, QUARTILE, HIGH}
 
 export default class QR {
 
-    public readonly version: number;
-    public readonly ecl: types.Ecl;
-    public readonly size: number;
-    public readonly modules: Array<Array<Module>> = [];
+    private readonly version: number;
+    private readonly ecl: types.Ecl;
+    private readonly size: number;
+    private readonly modules: Array<Array<Module>> = [];
 
     constructor(version: number, ecl: types.Ecl) {
         this.version = version;
@@ -27,7 +27,16 @@ export default class QR {
         return (bits >>> index) & 1;
     }
 
-    public initialize() {
+    public getVersion(): number {return this.version;}
+    public getEcl(): types.Ecl {return this.ecl;}
+    public getSize(): number {return this.size;}
+    public getModules(): Array<Array<Module>> {return this.modules;}
+
+    public toString(): string {
+        return this.modules.map(row => row.map(module => module.getColor() ? 1 : 0).join("  ")).join("\n");
+    }
+
+    public initialize(): void {
         this.drawTimingPatterns();
         this.drawFinderPatterns();
         this.drawSeparatorPatterns();
@@ -37,9 +46,9 @@ export default class QR {
         this.drawVersionInfoPatterns();
     }
 
-    private drawTimingPatterns() {
+    private drawTimingPatterns(): void {
         for (let i = 0; i < this.size; i++) {
-            const color = i % 2 == 0;
+            const color: boolean = i % 2 == 0;
             // row 6
             this.modules[6][i] = new FunctionalModule("TIMING", color);
             // column 6
@@ -47,7 +56,7 @@ export default class QR {
         }
     }
 
-    private drawFinderPatterns() {
+    private drawFinderPatterns(): void {
         const pos: Array<types.Position> = [
             // Top-left, Bottom-left, Top-Right
             [0, 0], [this.size - 7, 0], [0, this.size - 7]
@@ -66,7 +75,7 @@ export default class QR {
         }
     }
 
-    private drawSeparatorPatterns() {
+    private drawSeparatorPatterns(): void {
         const pos1: Array<types.Position> = [
             // row placed
             [7, 0], [7, this.size - 8], [this.size - 8, 0]
@@ -83,18 +92,18 @@ export default class QR {
         }
     }
 
-    private drawAlignmentPatterns() {
+    private drawAlignmentPatterns(): void {
         if (this.version == 1) return;
         const p: Array<number> = constants.ALIGNMENT_POSITION[this.version];
         // combine row and column position
         for (const x of p) {
             for (const y of p) {
-                const module = this.modules[x][y];
+                const module: Module = this.modules[x][y];
                 if (module instanceof FunctionalModule && (module as FunctionalModule).getType() != "TIMING") continue;
                 const pos: types.Position = [x - 2, y - 2];
                 for (let i = 0; i < 5; i++) {
                     for (let j = 0; j < 5; j++) {
-                        const px = pos[0] + i, py = pos[1] + j;
+                        const px: number = pos[0] + i, py: number = pos[1] + j;
                         if (i == 0 || i == 4)
                             this.modules[px][py] = new FunctionalModule("ALIGNMENT", true);
                         else if (i == 1 || i == 3)
@@ -107,31 +116,31 @@ export default class QR {
         }
     }
 
-    private drawDarkPattern() {
+    private drawDarkPattern(): void {
         this.modules[this.version * 4 + 9][8] = new FunctionalModule("Dark", true);
     }
 
-    public drawFormatPatterns(mask?: number) {
+    public drawFormatPatterns(mask?: number): void {
         const bits: number = (mask != undefined)? constants.FORMAT_INFO[ecls[this.ecl]][mask] : 0;
         for (let i = 0; i < 8; i++) {
-            const color = QR.getBitAt(bits, i) != 0;
+            const color: boolean = QR.getBitAt(bits, i) != 0;
             this.modules[8][this.size - i - 1] = new FunctionalModule("FORMAT_INFO", color);
             this.modules[(i < 6) ? i : i + 1][8] = new FunctionalModule("FORMAT_INFO", color);
         }
         for (let i = 0; i < 7; i++) {
-            const color = QR.getBitAt(bits, i + 8) != 0;
+            const color: boolean = QR.getBitAt(bits, i + 8) != 0;
             this.modules[8][(i >= 1) ? 6 - i : 7 - i] = new FunctionalModule("FORMAT_INFO", color);
             this.modules[this.size + i - 7][8] = new FunctionalModule("FORMAT_INFO", color);
         }
     }
 
-    private drawVersionInfoPatterns() {
+    private drawVersionInfoPatterns(): void {
         if (this.version < 7) return;
         const bits: number = constants.VERSION_INFO[this.version - 7];
         for (let i = 0; i < 18; i++) {
             const x: number = Math.floor(i / 3);
             const y: number = this.size - 11 + i % 3;
-            const color = QR.getBitAt(bits, i) != 0;
+            const color: boolean = QR.getBitAt(bits, i) != 0;
             this.modules[x][y] = new FunctionalModule("VERSION_INFO", color);
             this.modules[y][x] = new FunctionalModule("VERSION_INFO", color);
         }
@@ -154,7 +163,7 @@ export default class QR {
         return result;
     }
 
-    public placeCodeword(data: Array<Codeword>, path: Array<types.Position>) {
+    public placeCodeword(data: Array<Codeword>, path: Array<types.Position>): void {
         path.forEach(([x, y], index) => {
             const module: Module = new DataModule();
             if (index < data.length * 8) {
@@ -167,7 +176,7 @@ export default class QR {
     }
 
     public generateMask(which: number): QR {
-        const result = new QR(this.version, this.ecl);
+        const result: QR = new QR(this.version, this.ecl);
         for (let row = 0; row < this.size; row++) {
             for (let col = 0; col < this.size; col++) {
                 let color: boolean;
@@ -195,18 +204,18 @@ export default class QR {
         return result;
     }
 
-    public applyMask(mask: QR) {
+    public applyMask(mask: QR): void {
         for (let row = 0; row < this.size; row++) {
             for (let col = 0; col < this.size; col++) {
-                const m = mask.modules[row][col];
-                const original = this.modules[row][col];
+                const m: Module = mask.modules[row][col];
+                const original: Module = this.modules[row][col];
                 if (original instanceof DataModule && m instanceof MaskModule)
                     original.setColor(original.getColor() != m.getColor());
             }
         }
     }
 
-    public computePenalty() {
+    public computePenalty(): number {
         let dark: number = 0, p1: number = 0, p2: number = 0, p3: number = 0, p4: number;
         const sim1: Array<boolean> = [true, false, true, true, true, false, true, false, false, false, false],
             sim2: Array<boolean> = [false, false, false, false, true, false, true, true, true, false, true],
@@ -219,11 +228,11 @@ export default class QR {
             const row_queue: Array<boolean> = [], col_queue: Array<boolean> = [];
             for (let j = 0; j < this.size; j++) {
                 // scan each row
-                const row_color = this.modules[i][j].getColor();
+                const row_color: boolean = this.modules[i][j].getColor();
                 row_queue.push(row_color);
 
                 // scan each column
-                const col_color = this.modules[j][i].getColor();
+                const col_color: boolean = this.modules[j][i].getColor();
                 col_queue.push(col_color);
 
                 // count the number of dark modules
