@@ -1,13 +1,9 @@
 'use strict'
 const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     mode: 'development',
     entry: './lib/index.ts',
-    plugins: [
-        new CleanWebpackPlugin()
-    ],
     module: {
         rules: [
             {
@@ -21,8 +17,8 @@ module.exports = {
         extensions: [ '.tsx', '.ts', '.js' ],
     },
     output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist'),
+        filename: 'library.js',
+        path: path.resolve(__dirname, 'public/javascripts'),
         library: {
             root: 'qr',
             commonjs: "qr-lib"
@@ -37,6 +33,6 @@ module.exports = {
         }
     },
     optimization: {
-        minimize: false
+        minimize: true
     }
 };
