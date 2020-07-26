@@ -24,7 +24,7 @@ export namespace utils {
     function decToBin(n: number, length: number): Array<number> {
         if (length < 0 || length > 31 || n >>> length != 0) throw Error("Value Error");
         const result: Array<number> = [];
-        for (let i = length - 1; i >= 0; i--) result.push((n >>> i) & 1);
+        for (let i: number = length - 1; i >= 0; i--) result.push((n >>> i) & 1);
         return result;
     }
 
@@ -125,13 +125,13 @@ export namespace utils {
     // Step 3
     export function computeOptimalVersion(segments: Array<Segment>, version: number, ecl: types.Ecl, forced: boolean): number {
         if (forced) {
-            const capacity: number = getCapacity(version, ecl);
-            const length: number = computeNumCodewords(segments, version);
+            const capacity: number = getCapacity(version, ecl),
+                length: number = computeNumCodewords(segments, version);
             if (capacity < length) throw Error("Cannot Encode At This Version");
             return version;
         }
         let result: number = -1;
-        for (let i = 1; i <= 40; i++) {
+        for (let i: number = 1; i <= 40; i++) {
             const length: number = computeNumCodewords(segments, i);
             for (let key in constants.ECL) {
                 if (key == ecl) {
@@ -143,12 +143,14 @@ export namespace utils {
                 }
             }
         }
+        if (result == -1) throw Error("Cannot Encode");
         return result;
     }
 
     // Step 4
     export function generateDataCodeword(segments: Array<Segment>, version: number, ecl: types.Ecl): Array<DataCodeword> {
-        const result: Array<DataCodeword> = [], bits: Array<number> = [];
+        const result: Array<DataCodeword> = [], bits: Array<number> = [],
+            terminator: Array<number> = [0, 0, 0, 0], bitPad: Array<number> = [0, 0, 0, 0, 0, 0, 0];
         segments.forEach(segment => {
             decToBin(constants.MODE[segment.getMode()].indicator, 4).forEach(bit => bits.push(bit));
             decToBin(segment.getCharLen(), computeModeCharCount(segment.getMode(), version)).forEach(bit => bits.push(bit));
@@ -157,20 +159,20 @@ export namespace utils {
         const capacity: number = getCapacity(version, ecl) * 8;
 
         // Terminator padding
-        [0, 0, 0, 0].slice(0, Math.min(4, capacity - bits.length)).forEach(bit => bits.push(bit));
+        terminator.slice(0, Math.min(4, capacity - bits.length)).forEach(bit => bits.push(bit));
 
         // Bit padding
-        [0, 0, 0, 0, 0, 0, 0].slice(0, (8 - bits.length % 8) % 8).forEach(bit => bits.push(bit));
+        bitPad.slice(0, (8 - bits.length % 8) % 8).forEach(bit => bits.push(bit));
 
         // Byte padding
         const pad: Array<number> = [];
-        for (let i = 0, n = (capacity - bits.length) / 8; i < n; i++) {
+        for (let i: number = 0, n = (capacity - bits.length) / 8; i < n; i++) {
             if (i % 2 == 0) pad.push(1, 1, 1, 0, 1, 1, 0, 0);
             else pad.push(0, 0, 0, 1, 0, 0, 0, 1);
         }
         pad.forEach(bit => bits.push(bit));
 
-        for (let i = 0; i < bits.length; i += 8) {
+        for (let i: number = 0; i < bits.length; i += 8) {
             const codeword: DataCodeword = new DataCodeword(parseInt(bits.slice(i, i + 8).join(""), 2));
             codeword.setPreEcIndex(i / 8);
             result.push(codeword);
@@ -179,14 +181,14 @@ export namespace utils {
     }
     
     function splitData(data: Array<DataCodeword>, version: number, ecl: types.Ecl): Array<Array<DataCodeword>> {
-        const num_blocks: number = getNumEcBlocks(version, ecl);
-        const num_ec: number = getNumEcCodeword(version, ecl);
-        const num_codewords: number = computeNumRawCodeword(version);
-        const num_short_block: number = num_blocks - num_codewords % num_blocks;
-        const short_block_length: number = Math.floor(num_codewords / num_blocks);
+        const num_blocks: number = getNumEcBlocks(version, ecl),
+            num_ec: number = getNumEcCodeword(version, ecl),
+            num_codewords: number = computeNumRawCodeword(version),
+            num_short_block: number = num_blocks - num_codewords % num_blocks,
+            short_block_length: number = Math.floor(num_codewords / num_blocks),
+            result: Array<Array<DataCodeword>> = [];
 
-        const result: Array<Array<DataCodeword>> = [];
-        for (let index = 0, off = 0; index < num_blocks; index++) {
+        for (let index: number = 0, off = 0; index < num_blocks; index++) {
             const end: number = off + short_block_length - num_ec + ((index < num_short_block) ? 0 : 1);
             const block: Array<DataCodeword> = data.slice(off, end);
             block.forEach((dataCodeword, i) => {
@@ -200,9 +202,9 @@ export namespace utils {
     }
 
     function generateEcCodeword(blocks: Array<Array<DataCodeword>>, version: number, ecl: types.Ecl): Array<Array<EcCodeword>> {
-        const num_ec: number = getNumEcCodeword(version, ecl);
-        const short_block_length: number = blocks[0].length;
-        const ec: RSECG = new RSECG(num_ec);
+        const num_ec: number = getNumEcCodeword(version, ecl),
+            short_block_length: number = blocks[0].length,
+            ec: RSECG = new RSECG(num_ec);
         let pre_inter_leave_index: number = 0;
 
         return blocks.map((block, index) => {
@@ -210,8 +212,8 @@ export namespace utils {
                dataCodeword.setPreInterleaveIndex(pre_inter_leave_index);
                pre_inter_leave_index++;
            }
-           const block_bytes: Array<number> = block.map(dataCodeWord => dataCodeWord.value);
-           const ec_bytes: Array<number> = ec.getRemainder(block_bytes);
+           const block_bytes: Array<number> = block.map(dataCodeWord => dataCodeWord.getValue()),
+               ec_bytes: Array<number> = ec.getRemainder(block_bytes);
            return ec_bytes.map((byte, i) => {
                const ecCodeword: EcCodeword = new EcCodeword(byte);
                ecCodeword.setPreInterleaveIndex(pre_inter_leave_index);
@@ -224,10 +226,10 @@ export namespace utils {
     }
     
     function interleaveBlocks(data_blocks: Array<Array<DataCodeword>>, ec_blocks: Array<Array<EcCodeword>>): Array<Codeword> {
-        const ec_block_length: number = ec_blocks[0].length;
-        const data_block_length: number = data_blocks[data_blocks.length - 1].length;
-        const result: Array<Codeword> = [];
-        for (let i = 0; i < data_block_length; i++) {
+        const ec_block_length: number = ec_blocks[0].length,
+            data_block_length: number = data_blocks[data_blocks.length - 1].length,
+            result: Array<Codeword> = [];
+        for (let i: number = 0; i < data_block_length; i++) {
             data_blocks.forEach(block => {
                 if (i < block.length) {
                     const codeword: Codeword = block[i];
@@ -236,7 +238,7 @@ export namespace utils {
                 }
             });
         }
-        for (let i = 0; i < ec_block_length; i++) {
+        for (let i: number = 0; i < ec_block_length; i++) {
             ec_blocks.forEach(block => {
                 const codeword: Codeword = block[i];
                 codeword.setPostInterleaveIndex(result.length);
@@ -248,8 +250,8 @@ export namespace utils {
 
     // Step 5
     export function generateCodeword(data: Array<DataCodeword>, version: number, ecl: types.Ecl): Array<Codeword> {
-        const data_blocks: Array<Array<DataCodeword>> = splitData(data, version, ecl);
-        const ec_blocks: Array<Array<EcCodeword>> = generateEcCodeword(data_blocks, version, ecl);
+        const data_blocks: Array<Array<DataCodeword>> = splitData(data, version, ecl),
+            ec_blocks: Array<Array<EcCodeword>> = generateEcCodeword(data_blocks, version, ecl);
         return interleaveBlocks(data_blocks, ec_blocks);
     }
     
@@ -264,15 +266,15 @@ export namespace utils {
 
     // Step 7
     export function computeOptimalMask(qr: QR): [number, QR] {
-        const masks: Array<QR> = qr.generateAllMasks();
-        const values: Array<number> = masks.map((mask, index) => {
+        const masks: Array<QR> = qr.generateAllMasks(),
+            values: Array<number> = masks.map((mask, index) => {
             // TODO: find another way to deep copy
             const copy = _.cloneDeep(qr);
             copy.applyMask(mask);
             copy.drawFormatPatterns(index);
             return copy.computePenalty();
-        });
-        const which: number = values.indexOf(Math.min(...values));
+        }),
+            which: number = values.indexOf(Math.min(...values));
         return [which, masks[which]];
     }
 

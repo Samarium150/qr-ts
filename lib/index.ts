@@ -16,10 +16,10 @@ export namespace app {
     }
 
     export function generate(text: string, version: number, ecl: types.Ecl, forced: boolean, mask: number) {
-        if (!(typeof text === "string") || text.length === 0) throw Error("Invalid Input");
+        if (!(typeof text == "string") || text.length === 0) throw Error("Invalid Input");
         if (version < 1 || version > 40) throw Error("Invalid Version");
         // TODO: type checking for ecl
-        if (!(typeof forced === "boolean")) throw Error("Invalid Forced Value");
+        if (!(typeof forced == "boolean")) throw Error("Invalid Forced Value");
         if (mask < -1 || mask > 7) throw Error("Invalid Mask");
 
         const codePoints: Array<CodePoint> = utils.generateCodePoint(text);
@@ -28,23 +28,22 @@ export namespace app {
             isNumeric = isNumeric && utils.isNumeric(codePoint.getChar());
             isAlphanumeric = isAlphanumeric && utils.isAlphanumeric(codePoint.getChar());
         });
-        const mode: types.Mode = (isNumeric) ? "NUMERIC" : (isAlphanumeric) ? "ALPHANUMERIC" : "BYTE";
-        const segments: Array<Segment> = [utils.generateSegmentFromSingleMode(codePoints, mode)];
-        const optimalVersion: number = utils.computeOptimalVersion(segments, version, ecl, forced);
-        const dataCodeword: Array<DataCodeword> = utils.generateDataCodeword(segments, optimalVersion, ecl);
-        const codeword: Array<Codeword> = utils.generateCodeword(dataCodeword, optimalVersion, ecl);
-        const code: QR = utils.generateRawQR(codeword, optimalVersion, ecl);
-        const optimalMask: [number, QR] = (mask == -1) ? utils.computeOptimalMask(code) : [mask, code.generateMask(mask)];
+        const mode: types.Mode = (isNumeric) ? "NUMERIC" : (isAlphanumeric) ? "ALPHANUMERIC" : "BYTE",
+            segments: Array<Segment> = [utils.generateSegmentFromSingleMode(codePoints, mode)],
+            optimalVersion: number = utils.computeOptimalVersion(segments, version, ecl, forced),
+            dataCodeword: Array<DataCodeword> = utils.generateDataCodeword(segments, optimalVersion, ecl),
+            codeword: Array<Codeword> = utils.generateCodeword(dataCodeword, optimalVersion, ecl),
+            code: QR = utils.generateRawQR(codeword, optimalVersion, ecl),
+            optimalMask: [number, QR] = (mask == -1) ? utils.computeOptimalMask(code) : [mask, code.generateMask(mask)];
         utils.generateQR(code, optimalMask);
         code.extend(); // Changeable
-        const output: HTMLCanvasElement = document.createElement("canvas");
+        const output: HTMLCanvasElement = document.createElement("canvas"),
+            context: CanvasRenderingContext2D = output.getContext("2d")!,
+            numBlock: number = code.getSize() + 8,
+            size: number = 10; // Changeable
         output.id = "output";
-        const context: CanvasRenderingContext2D = output.getContext("2d")!;
-        const numBlock: number = code.getSize() + 8;
-        const size: number = 10; // Changeable
-        const edge: number = numBlock * size;
-        output.width = edge;
-        output.height = edge;
+        output.width = numBlock * size;
+        output.height = numBlock * size;
         const modules: Array<Array<Module>> = code.getModules();
         for (let row: number = 0; row < numBlock; row++) {
             for (let col: number = 0; col < numBlock; col++) {

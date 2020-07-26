@@ -16,9 +16,9 @@ export default class QR {
         this.version = version;
         this.ecl = ecl;
         this.size = version * 4 + 17;
-        for (let i = 0; i < this.size; i++) {
+        for (let i: number = 0; i < this.size; i++) {
             const row: Array<Module> = [];
-            for (let j = 0; j < this.size; j++) row.push(new Module());
+            for (let j: number = 0; j < this.size; j++) row.push(new Module());
             this.modules.push(row);
         }
     }
@@ -62,8 +62,8 @@ export default class QR {
             [0, 0], [this.size - 7, 0], [0, this.size - 7]
         ];
         for (const [x, y] of pos) {
-            for (let i = 0; i < 7; i++) {
-                for (let j = 0; j < 7; j++) {
+            for (let i: number = 0; i < 7; i++) {
+                for (let j: number = 0; j < 7; j++) {
                     if (i == 0 || i == 6)
                         this.modules[x + i][y + j] = new FunctionalModule("FINDER", true);
                     else if (i == 1 || i == 5)
@@ -101,8 +101,8 @@ export default class QR {
                 const module: Module = this.modules[x][y];
                 if (module instanceof FunctionalModule && (module as FunctionalModule).getType() != "TIMING") continue;
                 const pos: types.Position = [x - 2, y - 2];
-                for (let i = 0; i < 5; i++) {
-                    for (let j = 0; j < 5; j++) {
+                for (let i: number = 0; i < 5; i++) {
+                    for (let j: number = 0; j < 5; j++) {
                         const px: number = pos[0] + i, py: number = pos[1] + j;
                         if (i == 0 || i == 4)
                             this.modules[px][py] = new FunctionalModule("ALIGNMENT", true);
@@ -122,12 +122,12 @@ export default class QR {
 
     public drawFormatPatterns(mask?: number): void {
         const bits: number = (mask != undefined)? constants.FORMAT_INFO[ecls[this.ecl]][mask] : 0;
-        for (let i = 0; i < 8; i++) {
+        for (let i: number = 0; i < 8; i++) {
             const color: boolean = QR.getBitAt(bits, i) != 0;
             this.modules[8][this.size - i - 1] = new FunctionalModule("FORMAT_INFO", color);
             this.modules[(i < 6) ? i : i + 1][8] = new FunctionalModule("FORMAT_INFO", color);
         }
-        for (let i = 0; i < 7; i++) {
+        for (let i: number = 0; i < 7; i++) {
             const color: boolean = QR.getBitAt(bits, i + 8) != 0;
             this.modules[8][(i >= 1) ? 6 - i : 7 - i] = new FunctionalModule("FORMAT_INFO", color);
             this.modules[this.size + i - 7][8] = new FunctionalModule("FORMAT_INFO", color);
@@ -137,10 +137,10 @@ export default class QR {
     private drawVersionInfoPatterns(): void {
         if (this.version < 7) return;
         const bits: number = constants.VERSION_INFO[this.version - 7];
-        for (let i = 0; i < 18; i++) {
-            const x: number = Math.floor(i / 3);
-            const y: number = this.size - 11 + i % 3;
-            const color: boolean = QR.getBitAt(bits, i) != 0;
+        for (let i: number = 0; i < 18; i++) {
+            const x: number = Math.floor(i / 3),
+                y: number = this.size - 11 + i % 3,
+                color: boolean = QR.getBitAt(bits, i) != 0;
             this.modules[x][y] = new FunctionalModule("VERSION_INFO", color);
             this.modules[y][x] = new FunctionalModule("VERSION_INFO", color);
         }
@@ -148,10 +148,10 @@ export default class QR {
 
     public generateDataPath(): Array<types.Position> {
         const result: Array<types.Position> = [];
-        for (let col = this.size - 1; col > 0; col -= 2) {
+        for (let col: number = this.size - 1; col > 0; col -= 2) {
             if (col == 6) col = 5; // Skip the vertical Timing Pattern
-            for (let row = 0; row < this.size; row++) {
-                for (let i = 0; i < 2; i++) {
+            for (let row: number = 0; row < this.size; row++) {
+                for (let i: number = 0; i < 2; i++) {
                     const upward: boolean = ((col + 1) & 2) == 0;
                     const x: number = upward ? this.size - row - 1 : row;
                     const y: number = col - i;
@@ -168,7 +168,7 @@ export default class QR {
             const module: Module = new DataModule();
             if (index < data.length * 8) {
                 const codeword: Codeword = data[index >>> 3];
-                module.setColor(QR.getBitAt(codeword.value, 7 - (index & 7)) != 0);
+                module.setColor(QR.getBitAt(codeword.getValue(), 7 - (index & 7)) != 0);
                 index++;
             } else module.setColor(false);
             this.modules[x][y] = module;
@@ -177,8 +177,8 @@ export default class QR {
 
     public generateMask(which: number): QR {
         const result: QR = new QR(this.version, this.ecl);
-        for (let row = 0; row < this.size; row++) {
-            for (let col = 0; col < this.size; col++) {
+        for (let row: number = 0; row < this.size; row++) {
+            for (let col: number = 0; col < this.size; col++) {
                 let color: boolean;
                 switch (which) {
                     case 0: color = (row + col) % 2 == 0; break;
@@ -200,13 +200,13 @@ export default class QR {
 
     public generateAllMasks(): Array<QR> {
         const result: Array<QR> = [];
-        for (let i = 0; i < 8; i++) result.push(this.generateMask(i));
+        for (let i: number = 0; i < 8; i++) result.push(this.generateMask(i));
         return result;
     }
 
     public applyMask(mask: QR): void {
-        for (let row = 0; row < this.size; row++) {
-            for (let col = 0; col < this.size; col++) {
+        for (let row: number = 0; row < this.size; row++) {
+            for (let col: number = 0; col < this.size; col++) {
                 const m: Module = mask.modules[row][col];
                 const original: Module = this.modules[row][col];
                 if (original instanceof DataModule && m instanceof MaskModule)
@@ -221,12 +221,12 @@ export default class QR {
             sim2: Array<boolean> = [false, false, false, false, true, false, true, true, true, false, true],
             r1 = (result: boolean, curr: boolean, index: number) => result && (curr == sim1[index]),
             r2 = (result: boolean, curr: boolean, index: number) => result && (curr == sim2[index]);
-        for (let i = 0; i < this.size; i++) {
+        for (let i: number = 0; i < this.size; i++) {
             // Step 1: penalties for each group of 5 or more same-colored module
             let row_flag: boolean = true, col_flag: boolean = true,
                 row_counter: number = 0, col_counter: number = 0;
             const row_queue: Array<boolean> = [], col_queue: Array<boolean> = [];
-            for (let j = 0; j < this.size; j++) {
+            for (let j: number = 0; j < this.size; j++) {
                 // scan each row
                 const row_color: boolean = this.modules[i][j].getColor();
                 row_queue.push(row_color);
@@ -258,18 +258,18 @@ export default class QR {
                     if (col_counter >= 5) p1 += constants.PENALTIES.S1 + col_counter - 5;
                 } else if (i != this.size - 1) {
                     // Step 2: penalties for each 2 * 2 area of same-colored module
-                    const x = this.modules[i][j + 1].getColor();
-                    const y = this.modules[i + 1][j].getColor();
-                    const z = this.modules[i + 1][j + 1].getColor();
+                    const x = this.modules[i][j + 1].getColor(),
+                        y = this.modules[i + 1][j].getColor(),
+                        z = this.modules[i + 1][j + 1].getColor();
                     if (row_color == x && y == z && x == y) p2 += constants.PENALTIES.S2;
                 }
 
                 // Step 3: penalties for patterns that look similar to finder patterns
                 if (row_queue.length == sim1.length) { // same boolean value for column queue
-                    const a: boolean = row_queue.reduce(r1, true);
-                    const b: boolean = row_queue.reduce(r2, true);
-                    const c: boolean = col_queue.reduce(r1, true);
-                    const d: boolean = col_queue.reduce(r2, true);
+                    const a: boolean = row_queue.reduce(r1, true),
+                        b: boolean = row_queue.reduce(r2, true),
+                        c: boolean = col_queue.reduce(r1, true),
+                        d: boolean = col_queue.reduce(r2, true);
                     if (a) p3 += constants.PENALTIES.S3;
                     if (b) p3 += constants.PENALTIES.S3;
                     if (c) p3 += constants.PENALTIES.S3;
@@ -283,9 +283,9 @@ export default class QR {
         // Step 4: penalties for unbalanced white-black ratio
         const ratio: number = parseInt(((dark / this.size ** 2) * 100).toFixed());
         let a: number = 0, b: number = 0;
-        for (let i = 0; i < 5; i++) {
-            const prev: number = ratio - i;
-            const next: number = ratio + i;
+        for (let i: number = 0; i < 5; i++) {
+            const prev: number = ratio - i,
+                next: number = ratio + i;
             if(prev % 5 == 0) a = prev;
             if(next % 5 == 0) b = next;
         }

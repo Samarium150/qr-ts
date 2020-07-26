@@ -11,7 +11,7 @@ export default class CodePoint {
     // source: https://gist.github.com/joni/3760795#file-toutf8array-js
     private static toUTF8Array(str: string): Array<number> {
         const utf8: Array<number> = [];
-        for (let i = 0; i < str.length; i++) {
+        for (let i: number = 0; i < str.length; i++) {
             let char_code: number = str.charCodeAt(i);
             if (char_code < 0x80) utf8.push(char_code);
             else if (char_code < 0x800) {
