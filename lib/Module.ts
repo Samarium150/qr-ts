@@ -1,34 +1,34 @@
-import * as types from "./types";
+import {Functional} from "./types";
 
 class Module {
 
-    protected color: boolean = false;
+    protected color = false;
+
+    constructor(color?: boolean) {
+        if (color) this.color = color;
+    }
 
     public setColor(value: boolean): void {this.color = value;}
     public getColor(): boolean {return this.color;}
+    public copy(): Module {return new Module(this.color);}
 }
 
 class DataModule extends Module {}
 
 class FunctionalModule extends Module {
 
-    private readonly type: types.Function;
+    private readonly type: Functional;
 
-    constructor(type: types.Function, color: boolean) {
-        super();
-        this.color = color;
+    constructor(type: Functional, color: boolean) {
+        super(color);
         this.type = type;
     }
 
-    public getType(): types.Function {return this.type;}
+    public getType(): Functional {return this.type;}
+    public copy(): FunctionalModule {return new FunctionalModule(this.type, this.color);}
 }
 
-class MaskModule extends Module {
-    constructor(color: boolean) {
-        super();
-        this.color = color;
-    }
-}
+class MaskModule extends Module {}
 
 class QuietModule extends Module {}
 

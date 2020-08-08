@@ -1,13 +1,13 @@
 class Codeword {
 
-    protected pre_interleave_index: number = -1;
-    protected block_index: number = -1;
-    protected index: number = -1;
-    protected post_interleave_index: number = -1;
+    protected pre_interleave_index = -1;
+    protected block_index = -1;
+    protected index = -1;
+    protected post_interleave_index = -1;
     protected readonly value: number;
 
     protected constructor(value: number) {
-        if (value < 0 || value >= 255) throw Error("Invalid Value");
+        if (value < 0 || value > 255) throw Error(`Invalid Value ${value}`);
         this.value = value;
     }
 
@@ -20,7 +20,7 @@ class Codeword {
 
 class DataCodeword extends Codeword {
 
-    private pre_ec_index: number = -1;
+    private pre_ec_index = -1;
 
     constructor(value: number) {
         super(value);

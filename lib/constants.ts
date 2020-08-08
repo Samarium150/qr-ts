@@ -15,7 +15,7 @@ const ECL = {
         ordinal: 3,
         format: 2
     }
-}
+};
 
 const MODE = {
     NUMERIC: {
@@ -39,10 +39,18 @@ const MODE = {
         indicator: 0x7,
         charCount: [0, 0, 0]
     }*/
-}
+};
 
 const NUMERIC = "0123456789";
 const ALPHANUMERIC = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
+const KANJI = {
+    factor: 0xC0,
+    A: 0x8140,
+    B: 0x9FFC,
+    C: 0xE040,
+    D: 0xEBBF,
+    E: 0xC140
+};
 
 // Fixed capacity for each version and error correction level, calculation omitted
 const CAPACITY = [
@@ -88,7 +96,7 @@ const CAPACITY = [
     [2702, 2102, 1502, 1142], // Version 38
     [2812, 2216, 1582, 1222], // Version 39
     [2956, 2334, 1666, 1276], // Version 40
-]
+];
 
 const EC_CODEWORD_PER_BLOCK = [
     // [Error correction level: [Versions]]
@@ -157,7 +165,7 @@ const ALIGNMENT_POSITION = [
     [6, 32, 58, 84, 110, 136, 162], // Version 38
     [6, 26, 54, 82, 110, 138, 166], // Version 39
     [6, 30, 58, 86, 114, 142, 170], // Version 40
-]
+];
 
 // Fixed format info bits, calculation omitted
 const FORMAT_INFO = [
@@ -170,7 +178,7 @@ const FORMAT_INFO = [
         0b10010010110100, 0b10000110000011, 0b10111011011010, 0b10101111101101], // QUARTILE
     [0b1011010001001, 0b1001110111110, 0b1110011100111, 0b1100111010000,
         0b11101100010, 0b1001010101, 0b110100001100, 0b100000111011] // HIGH
-]
+];
 
 // Fixed version bits, calculation omitted
 const VERSION_INFO = [
@@ -208,20 +216,21 @@ const VERSION_INFO = [
     0b100110101001100100, // Version 38
     0b100111010101000001, // Version 39
     0b101000110001101001, // Version 40
-]
+];
 
 const PENALTIES = {
     S1: 3,
     S2: 3,
     S3: 40,
     S4: 10
-}
+};
 
 export {
     ECL,
     MODE,
     NUMERIC,
     ALPHANUMERIC,
+    KANJI,
     CAPACITY,
     ALIGNMENT_POSITION,
     EC_CODEWORD_PER_BLOCK,

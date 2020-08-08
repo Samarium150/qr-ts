@@ -21,7 +21,8 @@ form.onsubmit = _ => {
     // console.log(text, version, ecl, forced, mask);
     try {
         // load library before usage
-        const code = qr.app.generate(text, version, ecl, forced, mask);
+        const code = qr.generate(text, version, ecl, forced, mask);
+        qr.test();
         const prev = document.getElementById("output");
         if (prev != null) prev.replaceWith(code);
         else main.appendChild(code);
