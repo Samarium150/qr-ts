@@ -14,7 +14,7 @@ module.exports = {
     rules: {
         "indent": ["error", 4, { "SwitchCase": 1 }],
         "semi": ["error", "always"],
-        "linebreak-style": ["error", "windows"],
+        "linebreak-style": "off",
         "quotes": ["error", "double"],
         "@typescript-eslint/no-unnecessary-type-assertion": ["error", {"typesToIgnore": ["FunctionalModule"]}],
     }
