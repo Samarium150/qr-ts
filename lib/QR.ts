@@ -1,17 +1,34 @@
+/**
+ * @packageDocumentation
+ * @module utils
+ */
+
 import {Version, Ecl, Position, Mask} from "./types";
-import {ALIGNMENT_POSITION, VERSION_INFO, PENALTIES, FORMAT_INFO} from "./constants";
+import {ALIGNMENT_POSITION, VERSION_INFO, PENALTIES, FORMAT_INFO, ECL} from "./constants";
 import {DataModule, FunctionalModule, MaskModule, Module, QuietModule} from "./Module";
 import {Codeword} from "./Codeword";
 
-enum ecls {LOW, MEDIUM, QUARTILE, HIGH}
-
+/**
+ * The class for containing all information to generate a QR code
+ */
 export default class QR {
 
+    /** The version of QR code*/
     private readonly version: Version;
+    /** The error correction level */
     private readonly ecl: Ecl;
+    /** The size of QR code according to the version */
     private readonly size: number;
+    /** All data represented by a 2D array of module objects */
     private modules: Array<Array<Module>> = [];
 
+    /**
+     * Create a new QR instance
+     *
+     * @param version   The version of QR code
+     * @param ecl   The error correction level
+     * @param modules  The initial data for copying
+     */
     constructor(version: Version, ecl: Ecl, modules?: Array<Array<Module>>) {
         this.version = version;
         this.ecl = ecl;
@@ -26,21 +43,34 @@ export default class QR {
         }
     }
 
+    /**
+     * Get the specific bit of the given *\<bits\>* at *\<index\>*
+     * from right to left
+     *
+     * @param bits
+     * @param index
+     * @private
+     */
     private static getBitAt(bits: number, index: number): number {
         return (bits >>> index) & 1;
     }
 
+    /** Return the size */
     public getSize(): number {return this.size;}
+    /** Return the data */
     public getModules(): Array<Array<Module>> {return this.modules;}
 
+    /** Deep copy itself */
     public copy(): QR {
         return new QR(this.version, this.ecl, this.modules);
     }
 
+    /** Stringify the data */
     public toString(): string {
         return this.modules.map(row => row.map(module => module.getColor() ? 1 : 0).join(" ")).join("\n");
     }
 
+    /** Initializing by drawing fixed patterns */
     public initialize(): void {
         this.drawTimingPatterns();
         this.drawFinderPatterns();
@@ -51,21 +81,18 @@ export default class QR {
         this.drawVersionInfoPatterns();
     }
 
+    /** Draw the timing patterns */
     private drawTimingPatterns(): void {
         for (let i = 0; i < this.size; i++) {
             const color: boolean = i % 2 == 0;
-            // row 6
             this.modules[6][i] = new FunctionalModule("TIMING", color);
-            // column 6
             this.modules[i][6] = new FunctionalModule("TIMING", color);
         }
     }
 
+    /** Draw the finder patterns */
     private drawFinderPatterns(): void {
-        const pos: Array<Position> = [
-            // Top-left, Bottom-left, Top-Right
-            [0, 0], [this.size - 7, 0], [0, this.size - 7]
-        ];
+        const pos: Array<Position> = [[0, 0], [this.size - 7, 0], [0, this.size - 7]];
         for (const [x, y] of pos) {
             for (let i = 0; i < 7; i++) {
                 for (let j = 0; j < 7; j++) {
@@ -80,15 +107,10 @@ export default class QR {
         }
     }
 
+    /** Draw the separator patterns */
     private drawSeparatorPatterns(): void {
-        const pos1: Array<Position> = [
-            // row placed
-            [7, 0], [7, this.size - 8], [this.size - 8, 0]
-        ];
-        const pos2: Array<Position> = [
-            // column placed
-            [0, 7], [0, this.size - 8], [this.size - 8, 7]
-        ];
+        const pos1: Array<Position> = [[7, 0], [7, this.size - 8], [this.size - 8, 0]],
+            pos2: Array<Position> = [[0, 7], [0, this.size - 8], [this.size - 8, 7]];
         for (const [x, y] of pos1) {
             for (let i = 0; i < 8; i++) this.modules[x][y + i] = new FunctionalModule("SEPARATOR", false);
         }
@@ -97,6 +119,7 @@ export default class QR {
         }
     }
 
+    /** Draw the alignment patterns */
     private drawAlignmentPatterns(): void {
         if (this.version == 1) return;
         const p: Array<number> = ALIGNMENT_POSITION[this.version];
@@ -121,12 +144,14 @@ export default class QR {
         }
     }
 
+    /** Draw the dark pattern */
     private drawDarkPattern(): void {
         this.modules[this.version * 4 + 9][8] = new FunctionalModule("Dark", true);
     }
 
+    /** Draw the format patterns */
     public drawFormatPatterns(mask?: Mask): void {
-        const bits: number = (mask != undefined)? FORMAT_INFO[ecls[this.ecl]][mask] : 0;
+        const bits: number = (mask != undefined)? FORMAT_INFO[ECL[this.ecl]][mask] : 0;
         for (let i = 0; i < 8; i++) {
             const color: boolean = QR.getBitAt(bits, i) != 0;
             this.modules[8][this.size - i - 1] = new FunctionalModule("FORMAT_INFO", color);
@@ -139,6 +164,7 @@ export default class QR {
         }
     }
 
+    /** Draw the version information patterns */
     private drawVersionInfoPatterns(): void {
         if (this.version < 7) return;
         const bits: number = VERSION_INFO[this.version - 7];
@@ -151,6 +177,7 @@ export default class QR {
         }
     }
 
+    /** Generate an array of positions for placing data */
     public generateDataPath(): Array<Position> {
         const result: Array<Position> = [];
         for (let col = this.size - 1; col > 0; col -= 2) {
@@ -168,6 +195,12 @@ export default class QR {
         return result;
     }
 
+    /**
+     * Place the given *\<data\>* into the class through *\<path\>*
+     *
+     * @param data  The array of codeword
+     * @param path  The array of position
+     */
     public placeCodeword(data: Array<Codeword>, path: Array<Position>): void {
         path.forEach(([x, y], index) => {
             const module: Module = new DataModule();
@@ -180,6 +213,11 @@ export default class QR {
         });
     }
 
+    /**
+     * Generate a mask specified by the given *\<which\>*
+     *
+     * @param which
+     */
     public generateMask(which: Mask): QR {
         const result: QR = new QR(this.version, this.ecl);
         for (let row = 0; row < this.size; row++) {
@@ -203,12 +241,18 @@ export default class QR {
         return result;
     }
 
+    /** Generate all kinds of masks */
     public generateAllMasks(): Array<QR> {
         const result: Array<QR> = [];
         for (let i = 0; i < 8; i++) result.push(this.generateMask(i));
         return result;
     }
 
+    /**
+     * Apply the given *\<mask\>* to the data in the class
+     *
+     * @param mask  The QR object
+     */
     public applyMask(mask: QR): void {
         for (let row = 0; row < this.size; row++) {
             for (let col = 0; col < this.size; col++) {
@@ -220,6 +264,7 @@ export default class QR {
         }
     }
 
+    /** Compute the penalty for the class */
     public computePenalty(): number {
         let dark = 0, p1 = 0, p2 = 0, p3 = 0;
         const sim1: Array<boolean> = [true, false, true, true, true, false, true, false, false, false, false],
@@ -285,7 +330,7 @@ export default class QR {
             }
         }
 
-        // Step 4: penalties for unbalanced white-black ratio
+        // Step 4: penalties for unbalanced light-dark ratio
         const ratio: number = parseInt(((dark / this.size ** 2) * 100).toFixed());
         let a = 0, b = 0;
         for (let i = 0; i < 5; i++) {
@@ -298,6 +343,7 @@ export default class QR {
         return p1 + p2 + p3 + p4;
     }
 
+    /** Add 4 rows of light modules */
     private generateQuietRows(): Array<Array<QuietModule>> {
         const result: Array<Array<QuietModule>> = [];
         for (let i = 0; i < 4; i++) {
@@ -308,6 +354,7 @@ export default class QR {
         return result;
     }
 
+    /** Add a quiet zone - a 4-module-wide area of light modules around the QR code */
     public extend(): void {
         const pre: Array<Array<Module>> = this.generateQuietRows();
         for (let i = 0; i < this.size; i++) {
