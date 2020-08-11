@@ -1,6 +1,9 @@
 /**
- *
+ * Entrypoint of the library
+ * @packageDocumentation
+ * @module QR
  */
+
 import {Version, Ecl, Mask} from "./types";
 import * as utils from "./utils";
 import CodePoint from "./CodePoint";
