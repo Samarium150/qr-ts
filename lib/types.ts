@@ -6,7 +6,7 @@
 import {Literal, Number, Static, Tuple, Union} from "runtypes";
 
 /**
- * a Union of data encoding mode in string literal
+ * A Union of data encoding mode in string literal
  * for type aliasing. \
  * External library {@link https://github.com/pelotom/runtypes | runtypes } used here.
  *
@@ -71,7 +71,7 @@ type Position = Static<typeof Position>;
  *
  * @category Constant
  */
-const Version = Number.withConstraint(n => 1 <= n && n <= 40);
+const Version = Number.withConstraint(n => 1 <= n && n <= 40 || `${n} is not a valid version number`);
 type Version = Static<typeof Version>;
 
 /**
@@ -81,7 +81,7 @@ type Version = Static<typeof Version>;
  *
  * @category Constant
  */
-const Mask = Number.withConstraint(n => -1 <= n && n <= 7);
+const Mask = Number.withConstraint(n => -1 <= n && n <= 7 || `${n} is not a valid mask choice`);
 type Mask = Static<typeof Mask>;
 
 export {
