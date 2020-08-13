@@ -2,6 +2,7 @@
 .idea
 package-lock.json
 dummy.js
+docs
 
 # Logs
 logs
