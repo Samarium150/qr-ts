@@ -6,7 +6,7 @@
  */
 
 import * as constants from "./constants";
-import {Mode, Version, Ecl, Position} from "./types";
+import {Mode, Version, Ecl, Position, Mask} from "./types";
 import Segment from "./Segment";
 import CodePoint from "./CodePoint";
 import {Codeword, DataCodeword, ECCodeword} from "./Codeword";
@@ -14,6 +14,8 @@ import RSECG from "./RSECG";
 import QR from "./QR";
 import emoji_regex from "emoji-regex";
 import {convert} from "encoding-japanese";
+import Options from "./Options";
+import {Module} from "./Module";
 
 /**
  * Determine whether the given *\<char\>* is {@link ALPHANUMERIC | alphanumeric}
@@ -50,6 +52,18 @@ function isNumeric(char: string): boolean {
  */
 function isKanji(char: string): boolean {
     return (convert(char, {to: "SJIS", type: "array"}) as Array<number>).indexOf(63) == -1;
+}
+
+/**
+ * Determine whether the given *\<str\>* is a valid hex color string. \
+ * It should start with "#" and contain 3 or 6 hex number.
+ *
+ * @param str  The string that should be tested, can be undefined
+ *
+ * @return  TRUE if *\<str\>* is valid or undefined, FALSE otherwise
+ */
+function isColor(str: string | undefined): boolean {
+    return (str == undefined) ? false : /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i.test(str);
 }
 
 /**
@@ -597,18 +611,42 @@ function generateQR(qr: QR, mask: [number, QR]): void {
     qr.drawFormatPatterns(mask[0]);
 }
 
+/**
+ * Wrap up all steps for generating and return a Canvas that has the QR code
+ *
+ * @param text  The string that should be encoded to QR code
+ * @param options  Options for how the QR code generated
+ */
+function generate(text: string, options: Options): HTMLCanvasElement {
+    const version: Version = options.version as Version,
+        ecl: Ecl = options.ecl as Ecl, forced: boolean = options.forced as boolean,
+        mask: Mask = options.mask as Mask, codePoints: Array<CodePoint> = generateCodePoint(text),
+        [optimalVersion, segments]: [Version, Array<Segment>] = generateOptimalSegments(codePoints, version, ecl, forced),
+        codeword: Array<Codeword> = generateCodeword(generateDataCodeword(segments, optimalVersion, ecl), optimalVersion, ecl),
+        code: QR = generateRawQR(codeword, optimalVersion, ecl),
+        optimalMask: [number, QR] = (mask == -1) ? computeOptimalMask(code) : [mask, code.generateMask(mask)];
+    generateQR(code, optimalMask);
+    code.extend();
+    const output: HTMLCanvasElement = document.createElement("canvas"),
+        context: CanvasRenderingContext2D | null = output.getContext("2d"),
+        numBlock: number = code.getSize() + 8,
+        size: number = options.size as number;
+    if (!context) throw Error("Cannot get canvas context");
+    output.id = "output";
+    output.width = numBlock * size;
+    output.height = numBlock * size;
+    const modules: Array<Array<Module>> = code.getModules();
+    for (let row = 0; row < numBlock; row++) {
+        for (let col = 0; col < numBlock; col++) {
+            context.fillStyle = (modules[row][col].getColor()) ? options.c1 as string : options.c2 as string;
+            context.fillRect(col * size, row * size, size, size);
+        }
+    }
+    context.stroke();
+    return output;
+}
+
 export {
-    isAlphanumeric,
-    isNumeric,
-    generateCodePoint,
-    generateSegmentFromSingleMode,
-    generateSegmentsFromMultiModes,
-    computeOptimalEncodingMode,
-    computeOptimalVersion,
-    generateOptimalSegments,
-    generateDataCodeword,
-    generateCodeword,
-    generateRawQR,
-    computeOptimalMask,
-    generateQR
+    isColor,
+    generate
 };

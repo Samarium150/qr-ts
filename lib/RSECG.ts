@@ -10,8 +10,10 @@
  */
 export default class RSECG {
 
+    /** @ignore */
     private readonly coefficients: Array<number> = [];
 
+    /** @ignore */
     constructor(degree: number) {
         if (degree < 1 || degree > 255) throw Error("Degree out of range");
         const coefs: Array<number> = this.coefficients;
@@ -29,6 +31,7 @@ export default class RSECG {
         }
     }
 
+    /** @ignore */
     private static multiply(a: number, b: number): number {
         if (a >>> 8 != 0 || b >>> 8 != 0) throw Error("Invalid bytes");
         let n = 0;
@@ -40,6 +43,7 @@ export default class RSECG {
         return n;
     }
 
+    /** @ignore */
     public getRemainder(data: Array<number>): Array<number> {
         const result: Array<number> = this.coefficients.map(() => 0);
         for (const byte of data) {

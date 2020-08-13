@@ -67,7 +67,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Entrypoint of the library</p>
+						<p>This is the entrypoint of qr.js library</p>
 					</div>
 				</div>
 			</section>
@@ -78,10 +78,8 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="qr.html#_generate" class="tsd-kind-icon">_generate</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="qr.html#debug" class="tsd-kind-icon">debug</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="qr.html#generate" class="tsd-kind-icon">generate</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="qr.html#test" class="tsd-kind-icon">test</a></li>
 							</ul>
 						</section>
 					</div>
@@ -89,41 +87,6 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-					<a name="_generate" class="tsd-anchor"></a>
-					<h3>_generate</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">_generate<span class="tsd-signature-symbol">(</span>text<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><a href="utils.html#version-1" class="tsd-signature-type">Version</a>, ecl<span class="tsd-signature-symbol">: </span><a href="utils.html#ecl-2" class="tsd-signature-type">Ecl</a>, forced<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, mask<span class="tsd-signature-symbol">: </span><a href="utils.html#mask-1" class="tsd-signature-type">Mask</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLCanvasElement</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/csc309-summer-2020/js-library-shenjunw/blob/0d39374/lib/index.ts#L20">index.ts:20</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>text: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>version: <a href="utils.html#version-1" class="tsd-signature-type">Version</a></h5>
-								</li>
-								<li>
-									<h5>ecl: <a href="utils.html#ecl-2" class="tsd-signature-type">Ecl</a></h5>
-								</li>
-								<li>
-									<h5>forced: <span class="tsd-signature-type">boolean</span></h5>
-								</li>
-								<li>
-									<h5>mask: <a href="utils.html#mask-1" class="tsd-signature-type">Mask</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLCanvasElement</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="debug" class="tsd-anchor"></a>
 					<h3>debug</h3>
@@ -134,16 +97,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/csc309-summer-2020/js-library-shenjunw/blob/0d39374/lib/index.ts#L16">index.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/csc309-summer-2020/js-library-shenjunw/blob/80e4851/lib/index.ts#L17">index.ts:17</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Alias <em>console.log</em> function for developer on debugging proposes</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> message: <span class="tsd-signature-type">unknown</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The same as <em>console.log</em></p>
+									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>optionalParams: <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The same as <em>console.log</em></p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -154,51 +128,36 @@
 					<a name="generate" class="tsd-anchor"></a>
 					<h3>generate</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">generate<span class="tsd-signature-symbol">(</span>text<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">unknown</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">unknown</span>, ecl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">unknown</span>, forced<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">unknown</span>, mask<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLCanvasElement</span></li>
+						<li class="tsd-signature tsd-kind-icon">generate<span class="tsd-signature-symbol">(</span>text<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">unknown</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/utils.options.html" class="tsd-signature-type">Options</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLCanvasElement</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/csc309-summer-2020/js-library-shenjunw/blob/0d39374/lib/index.ts#L47">index.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/csc309-summer-2020/js-library-shenjunw/blob/80e4851/lib/index.ts#L27">index.ts:27</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Generating a QR code according to <em>&lt;text&gt;</em> and <em>&lt;options&gt;</em></p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>text: <span class="tsd-signature-type">unknown</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The string that should be encoded to QR code</p>
+									</div>
 								</li>
 								<li>
-									<h5>version: <span class="tsd-signature-type">unknown</span></h5>
-								</li>
-								<li>
-									<h5>ecl: <span class="tsd-signature-type">unknown</span></h5>
-								</li>
-								<li>
-									<h5>forced: <span class="tsd-signature-type">unknown</span></h5>
-								</li>
-								<li>
-									<h5>mask: <span class="tsd-signature-type">unknown</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/utils.options.html" class="tsd-signature-type">Options</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Options for how the QR code generated, details <a href="../interfaces/utils.options.html">HERE</a></p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLCanvasElement</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="test" class="tsd-anchor"></a>
-					<h3>test</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">test<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/csc309-summer-2020/js-library-shenjunw/blob/0d39374/lib/index.ts#L56">index.ts:56</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -220,17 +179,11 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<a href="qr.html#_generate" class="tsd-kind-icon">_generate</a>
-					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="qr.html#debug" class="tsd-kind-icon">debug</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="qr.html#generate" class="tsd-kind-icon">generate</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="qr.html#test" class="tsd-kind-icon">test</a>
 					</li>
 				</ul>
 			</nav>
@@ -249,6 +202,9 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
