@@ -1,0 +1,231 @@
+extends layout
+
+block append meta
+    meta(name="description" content="Example page")
+
+block append stylesheets
+    link(rel="stylesheet" href="stylesheets/examples.css")
+
+block prepend body
+    body
+        nav(class="navbar navbar-expand-md navbar-dark bg-dark")
+            div(class="container-fluid shrink")
+                a(class="navbar-brand title" href="index.html") qr.js
+                button(
+                    class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarCollapse" aria-controls="navbarCollapse"
+                    aria-expanded="false" aria-label="Toggle navigation")
+                    span(class="navbar-toggler-icon"
+                    )
+                div(class="collapse navbar-collapse justify-content-end" id="navbarCollapse")
+                    div(class="navbar-nav")
+                        a(class="nav-link active" aria-current="page" href="examples.html") Examples
+                        a(class="nav-link" href="docs/index.html") API
+                        a(class="nav-link" href="https://github.com/csc309-summer-2020/js-library-shenjunw") GitHub
+        div(id="main" class="container overflow-hidden shrink")
+            div(class="row")
+                div(class="col-auto offset-md-1")
+                    div(class="list-group" id="list" role="tablist")
+                        a(
+                            class="list-group-item list-group-item-action active"
+                            id="list-introduction"
+                            data-toggle="list"
+                            aria-controls="introduction"
+                            role="tab"
+                            href="#introduction"
+                        ) Introduction
+                        a(
+                            class="list-group-item list-group-item-action"
+                            id="list-by-default"
+                            data-toggle="list"
+                            aria-controls="by-default"
+                            role="tab"
+                            href="#by-default"
+                        ) Generate by default
+                        a(
+                            class="list-group-item list-group-item-action"
+                            id="list-with-options"
+                            data-toggle="list"
+                            aria-controls="with-options"
+                            role="tab"
+                            href="#with-options"
+                        ) Generate with options
+                div(class="col-8 mr-auto")
+                    div(class="tab-content" id="nav-tabContent")
+                        div(
+                            class="tab-pane fade show active"
+                            id="introduction" role="tabpanel"
+                            aria-labelledby="list-by-default"
+                        )
+                            p(class="text-warp")
+                                | This library provides a simple function named
+                                |
+                                a(class="font-italic" href="docs/modules/qr.html#generate") generate()
+                                |
+                                | which takes a string input and a optional object as custom options for the QR code.
+                            p(class="text-warp").
+                                Available options will be introduced later.
+                            p(class="text-warp").
+                                After putting the library file in the #{'<'}script#{'>'} tag, you can use
+                                #[em qr.generate()] in your own script, if you are using vanilla JavaScript.
+                                Alternatively, you can also use #[em require('library')] to import the library in nodejs.
+                            p(class="text-warp").
+                                Here are two examples for showing how to use the library. Click the tab on the left to show.
+                        div(
+                            class="tab-pane fade"
+                            id="by-default" role="tabpanel"
+                            aria-labelledby="list-by-default"
+                        )
+                            p(class="text-warp").
+                                This is the most basic usage for this library. Providing a text input, and the id of output,
+                                it returns a HTMLCanvasElement with the given id, which can be added to DOM directly.
+                            code(class="code").
+                                const code = qr.generate(text, "output"); #[br]
+                                const prev = document.getElementById("output"); #[br]
+                                if (prev != null) prev.replaceWith(code); #[br]
+                                else document.getElementById("main").appendChild(code);
+                            form(id="example-default")
+                                div(class="row g-3 align-items-center")
+                                    div(class="col-auto")
+                                        label(class="form-label" for="default-input") Text For Encoding:
+                                    div(class="col-auto")
+                                        input(
+                                            class="form-control"
+                                            type="text" id="default-input" name="text"
+                                            aria-describedby="defaultTextHelp"
+                                            required
+                                        )
+                                    div(class="col-auto")
+                                        button(type="submit" class="btn btn-primary") Generate
+                                span(class="form-text" id="defaultTextHelp") Any UTF-16 String is acceptable
+                        div(
+                            class="tab-pane fade"
+                            id="with-options" role="tabpanel"
+                            aria-labelledby="list-with-options"
+                        )
+                            p(class="text-warp").
+                                This is the advanced usage for this library. Providing a text input, id of output,
+                                and an object standing for options, it returns a HTMLCanvasElement with the given id,
+                                which can be added to DOM directly.
+                            p(class="text-warp")
+                                | Options are described in the documentation of
+                                |
+                                a(class="font-italic" href="docs/interfaces/utils.options.html") Options
+                                | interface. For more details about the meaning of these terms, please see this
+                                |
+                                a(class="font-italic" href="https://www.thonky.com/qr-code-tutorial/") tutorial
+                            code(class="code").
+                                const code = qr.generate(text, "output", #[br]{#[br]
+                                version: version_number, ecl: error_correction_level,#[br]
+                                forced: force_to_use_the_given_version, mask: mask_pattern,#[br]
+                                c1: color_for_dark_square, c2: color_for_light_square,#[br]
+                                size: width_of_a_square#[br]
+                                }); #[br]
+                                const prev = document.getElementById("output"); #[br]
+                                if (prev != null) prev.replaceWith(code); #[br]
+                                else document.getElementById("main").appendChild(code);
+                            div(class="row g-2 align-items-center")
+                                form(class="col-auto" id="example-options")
+                                    div(class="mb-2")
+                                        label(class="form-label" for="options-input") Text For Encoding:
+                                        input(
+                                            class="form-control"
+                                            type="text" id="options-input" name="text"
+                                            aria-describedby="optionsTextHelp"
+                                            required
+                                        )
+                                        div(class="form-text" id="optionsTextHelp") Any UTF-16 String is acceptable
+                                    div(class="mb-2")
+                                        label(class="form-label" for="version") Minimum Version:
+                                        input(
+                                            class="form-control"
+                                            type="number" id="version"
+                                            name="version" value="1" min="1" max="40"
+                                            aria-labelledby="optionsVersionHelp"
+                                        )
+                                        div(class="form-text" id="optionsVersionHelp").
+                                            Range from 1 to 40, #[br] higher version requires more space to show
+                                        input(
+                                            class="form-check-input space"
+                                            type="checkbox" value=false
+                                            id="forced" name="forced"
+                                        )
+                                        label(class="form-check-label" for="forced") Force to use this version
+                                    div(class="mb-2")
+                                        label(class="space") Error Correction Level:
+                                        br
+                                        div(class="form-check form-check-inline")
+                                            input(
+                                                class="form-check-input"
+                                                type="radio" value="LOW"
+                                                name="ecl" id="low"
+                                                checked
+                                            )
+                                            label(class="form-check-label radio" for="low") LOW
+                                        div(class="form-check form-check-inline")
+                                            input(
+                                                class="form-check-input"
+                                                type="radio" value="MEDIUM"
+                                                name="ecl" id="medium"
+                                            )
+                                            label(class="form-check-label radio" for="medium") MEDIUM
+                                        div(class="form-check form-check-inline")
+                                            input(
+                                                class="form-check-input"
+                                                type="radio" value="QUARTILE"
+                                                name="ecl" id="quartile"
+                                            )
+                                            label(class="form-check-label radio" for="quartile") QUARTILE
+                                        div(class="form-check form-check-inline")
+                                            input(
+                                                class="form-check-input"
+                                                type="radio" value="HIGH"
+                                                name="ecl" id="high"
+                                            )
+                                            label(class="form-check-label radio" for="high") HIGH
+                                    div(class="mb-2")
+                                        label(class="form-label" for="mask") Mask Pattern:
+                                        input(
+                                            class="form-control"
+                                            type="number" id="mask"
+                                            name="mask" value="-1" min="-1" max="7"
+                                            aria-labelledby="optionsMaskHelp"
+                                        )
+                                        div(class="form-text" id="optionsMaskHelp") Range from -1 to 7, -1 for auto
+                                    div(class="mb-2 row")
+                                        div(class="col-auto")
+                                            label(class="form-label" for="dark") Dark Square Color
+                                            input(
+                                                class="form-control form-control-color"
+                                                type="color" id="dark" name="c1"
+                                                value="#000000"
+                                            )
+                                        div(class="col-auto")
+                                            label(class="form-label" for="light") Light Square Color
+                                            input(
+                                                class="form-control form-control-color"
+                                                type="color" id="light" name="c2"
+                                                value="#FFFFFF"
+                                            )
+                                    div(class="mb-2")
+                                        label(class="form-label" for="size") Size of Square:
+                                        input(
+                                            class="form-control"
+                                            type="number" id="size"
+                                            name="size" value="10" min="1" max="15"
+                                            aria-labelledby="optionsSizeHelp"
+                                        )
+                                        div(class="form-text" id="optionsSizeHelp") Range from 1 to 15, range can be changed
+                                    div(class="mb-2")
+                                        button(type="submit" class="btn btn-primary") Generate
+                                    div(class="mb-3")
+                                div(class="col-auto" id="by-options")
+        footer(class="fixed-bottom")
+            p(class="text-left")
+                | Powered by
+                |
+                a(class="text-blue" href="https://getbootstrap.com/") Bootstrap
+
+block append scripts
+    script(src="javascripts/library.js")
+    script(src="javascripts/examples.js")

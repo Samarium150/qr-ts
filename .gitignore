@@ -1,8 +1,14 @@
-# Copied from https://github.com/github/gitignore/blob/master/Node.gitignore
+# Forked from https://github.com/github/gitignore/blob/master/Node.gitignore
+
+# IDE Setting
 .idea
+
+# Generated Files
 package-lock.json
-dummy.js
-docs
+public/docs
+public/javascripts/library.js
+public/stylesheets
+dist
 
 # Logs
 logs

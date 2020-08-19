@@ -1,0 +1,27 @@
+extends layout
+
+block append meta
+    meta(name="description" content="Landing page")
+
+block append stylesheets
+    link(rel="stylesheet" href="stylesheets/index.css")
+
+block prepend body
+    body(class="d-flex h-100 text-center text-white bg-primary bg-gradient")
+        div(class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column")
+            header(class="mb-auto")
+                div
+                    nav(class="nav nav-masthead justify-content-center float-md-right")
+                        a(class="nav-link active" aria-current="page" href="index.html") Home
+                        a(class="nav-link" href="docs/index.html") API
+                        a(class="nav-link" href="https://github.com/csc309-summer-2020/js-library-shenjunw") GitHub
+            main(class="px-3")
+                h1(class="title") qr.js
+                p(class="lead") Create your own QR code with this TypeScript library
+                p(class="lead")
+                    a(class="btn btn-lg btn-secondary font-weight-bold border-white bg-white link" href="examples.html") Go to example
+            footer(class="mt-auto text-white-50")
+                p
+                    | Powered by
+                    |
+                    a(class="text-white" href="https://getbootstrap.com/") Bootstrap
