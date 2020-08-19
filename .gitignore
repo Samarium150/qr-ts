@@ -8,6 +8,7 @@ package-lock.json
 public/docs
 public/javascripts/library.js
 public/stylesheets
+public/*.html
 dist
 
 # Logs
