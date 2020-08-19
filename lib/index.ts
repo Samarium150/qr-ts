@@ -22,10 +22,12 @@ function debug(message?: unknown, ...optionalParams: unknown[]): void {
  * Generate a QR code in an HTML canvas according to *\<text\>* and *\<options\>*
  *
  * @param text  The string that should be encoded to QR code
+ * @param id  The ID of HTMLCanvasElement output
  * @param options  Options for how the QR code generated, details {@link Options | HERE}
  */
-function generate(text: unknown, options?: Options): HTMLCanvasElement {
+function generate(text: unknown, id: unknown, options?: Options): HTMLCanvasElement {
     if (typeof text != "string" || text.length == 0) throw Error("Invalid Input String");
+    if (typeof id != "string" || text.length == 0) throw Error("Invalid Input ID");
     const setting: Options = {
         version: 1,
         ecl: "LOW",
@@ -36,21 +38,22 @@ function generate(text: unknown, options?: Options): HTMLCanvasElement {
         size: 10
     };
     if (options != undefined) {
-        if (Version.check(options.version)) setting.version = options.version;
-        if (Ecl.check(options.ecl)) setting.ecl = options.ecl;
+        if (options.version != undefined && Version.check(options.version)) setting.version = options.version;
+        if (options.ecl != undefined && Ecl.check(options.ecl)) setting.ecl = options.ecl;
         if (typeof options.forced == "boolean") setting.forced = options.forced;
-        if (Mask.check(options.mask)) setting.mask = options.mask;
+        if (options.mask != undefined && Mask.check(options.mask)) setting.mask = options.mask;
 
         if (utils.isColor(options.c1)) setting.c1 = options.c1;
-        else if (options.c1 != undefined) throw Error("Invalid hex color");
+        else if (options.c1 != undefined) throw Error("Invalid hex color c1");
 
-        if (utils.isColor(options.c1)) setting.c2 = options.c2;
-        else if (options.c2 != undefined) throw Error("Invalid hex color");
+        if (utils.isColor(options.c2)) setting.c2 = options.c2;
+        else if (options.c2 != undefined) throw Error("Invalid hex color c2");
 
-        if (typeof options.size != ("number" || "undefined")) throw Error("Invalid size choice");
-        else setting.size = options.size;
+        if (typeof options.size != "number" && options.size != undefined) throw Error("Invalid size choice");
+        else if (typeof options.size == "number") setting.size = options.size;
     }
-    return utils.generate(text, setting);
+    console.log(setting);
+    return utils.generate(text, id, setting);
 }
 
 export {

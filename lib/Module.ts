@@ -63,7 +63,7 @@ class FunctionalModule extends Module {
     public copy(): FunctionalModule {return new FunctionalModule(this.type, this.color);}
 }
 
-/** The class representing a square that is for masking propose */
+/** The class representing a square that is for masking purpose */
 class MaskModule extends Module {}
 
 /** The class representing a square that is always light for decoration */

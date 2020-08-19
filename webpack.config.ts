@@ -11,7 +11,10 @@ const config: webpack.Configuration = {
                 out: path.resolve(__dirname, "public/docs"),
                 includeDeclarations: false,
                 ignoreCompilerErrors: true,
-                plugin: "typedoc-plugin-external-module-name"
+                plugin: ["typedoc-plugin-external-module-name", "typedoc-plugin-extras"],
+                favicon: path.resolve(__dirname, "public/images/favicon.ico"),
+                hideDate: true,
+                hideTime: true
             },  "./lib"
         )
     ],

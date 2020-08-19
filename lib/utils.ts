@@ -15,7 +15,7 @@ import QR from "./QR";
 import emoji_regex from "emoji-regex";
 import {convert} from "encoding-japanese";
 import Options from "./Options";
-import {Module} from "./Module";
+import {Module, QuietModule} from "./Module";
 
 /**
  * Determine whether the given *\<char\>* is {@link ALPHANUMERIC | alphanumeric}
@@ -62,8 +62,8 @@ function isKanji(char: string): boolean {
  *
  * @return  TRUE if *\<str\>* is valid or undefined, FALSE otherwise
  */
-function isColor(str: string | undefined): boolean {
-    return (str == undefined) ? false : /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i.test(str);
+function isColor(str?: string): boolean {
+    return /^((0x){0,1}|#{0,1})([0-9A-F]{8}|[0-9A-F]{6})$/ig.test(str as string);
 }
 
 /**
@@ -615,9 +615,10 @@ function generateQR(qr: QR, mask: [number, QR]): void {
  * Wrap up all steps for generating and return a Canvas that has the QR code
  *
  * @param text  The string that should be encoded to QR code
+ * @param id  The id of HTMLCanvasElement output
  * @param options  Options for how the QR code generated
  */
-function generate(text: string, options: Options): HTMLCanvasElement {
+function generate(text: string, id: string, options: Options): HTMLCanvasElement {
     const version: Version = options.version as Version,
         ecl: Ecl = options.ecl as Ecl, forced: boolean = options.forced as boolean,
         mask: Mask = options.mask as Mask, codePoints: Array<CodePoint> = generateCodePoint(text),
@@ -632,13 +633,15 @@ function generate(text: string, options: Options): HTMLCanvasElement {
         numBlock: number = code.getSize() + 8,
         size: number = options.size as number;
     if (!context) throw Error("Cannot get canvas context");
-    output.id = "output";
+    output.id = id;
     output.width = numBlock * size;
     output.height = numBlock * size;
     const modules: Array<Array<Module>> = code.getModules();
     for (let row = 0; row < numBlock; row++) {
         for (let col = 0; col < numBlock; col++) {
-            context.fillStyle = (modules[row][col].getColor()) ? options.c1 as string : options.c2 as string;
+            const module: Module = modules[row][col];
+            context.fillStyle = (module instanceof QuietModule) ?
+                "#FFFFFF" : (module.getColor()) ? options.c1 as string : options.c2 as string;
             context.fillRect(col * size, row * size, size, size);
         }
     }
