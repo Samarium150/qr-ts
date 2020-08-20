@@ -9,7 +9,7 @@ import {Ecl, Mask, Version} from "./types";
 import * as utils from "./utils";
 
 /**
- * Alias *console.log* function for developer on debugging proposes
+ * Alias *console.log* function for developer on debugging purposes
  *
  * @param message  The same as *console.log*
  * @param optionalParams  The same as *console.log*
