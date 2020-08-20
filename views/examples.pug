@@ -60,15 +60,16 @@ block prepend body
                             p(class="text-warp")
                                 | This library provides a simple function named
                                 |
-                                a(class="font-italic" href="docs/modules/qr.html#generate") generate()
+                                a(href="docs/modules/qr.html#generate") generate()
                                 |
-                                | which takes a string input and a optional object as custom options for the QR code.
+                                | which takes a string input, a string id and an optional object as custom options
+                                | for the QR code.
                             p(class="text-warp").
                                 Available options will be introduced later.
                             p(class="text-warp").
                                 After putting the library file in the #{'<'}script#{'>'} tag, you can use
-                                #[em qr.generate()] in your own script, if you are using vanilla JavaScript.
-                                Alternatively, you can also use #[em require('library')] to import the library in nodejs.
+                                #[i qr.generate()] in your own script, if you are using vanilla JavaScript.
+                                Alternatively, you can also use #[i require('library')] to import the library in nodejs.
                             p(class="text-warp").
                                 Here are two examples for showing how to use the library. Click the tab on the left to show.
                         div(
@@ -111,9 +112,11 @@ block prepend body
                                 | Options are described in the documentation of
                                 |
                                 a(class="font-italic" href="docs/interfaces/utils.options.html") Options
+                                |
                                 | interface. For more details about the meaning of these terms, please see this
                                 |
                                 a(class="font-italic" href="https://www.thonky.com/qr-code-tutorial/") tutorial
+                                | .
                             code(class="code").
                                 const code = qr.generate(text, "output", #[br]{#[br]
                                 version: version_number, ecl: error_correction_level,#[br]
