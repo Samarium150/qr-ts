@@ -11,21 +11,33 @@ Download from the latest release or build from source
 ```
 git clone https://github.com/csc309-summer-2020/js-library-shenjunw.git
 ```
+
 #### Install Dependencies
-Prerequisite: Nodejs installed
+Prerequisite: Node.js installed
 ```
 npm install
 ```
+
 #### Build the Library
+In production mode:
 ```
-npm build
+npm run build
+```
+In development mode:
+```
+npm run devBuild
 ```
 The compiled JavaScript file is in `./public/javascripts/` folder, named `library.js`
+
 #### Start Local Landing / Example Pages
+Start an Express server at localhost:3000
 ```
-npm start
+npm run start
 ```
-This will start an Express server at localhost:3000
+Start the server by [`nodemon`](https://github.com/remy/nodemon)
+```
+npm run dev
+```
 
 ### Usage
 
@@ -38,6 +50,11 @@ const qr = require("./library");
 ```
 
 Now you can call API functions in your scripts on `qr`.
+
+## Further Development
+- Move to personal repository (instead of organization's)
+- Adding tests
+- Publish to NPM
 
 ## Deployment
 [Landing Page](https://blooming-retreat-31199.herokuapp.com) <br>
