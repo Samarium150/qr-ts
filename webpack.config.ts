@@ -3,7 +3,6 @@ import * as webpack from "webpack";
 import TypeDocWebpackPlugin from "./typedoc_webpack_plugin";
 
 const config: webpack.Configuration = {
-    mode: "development",
     entry: "./lib/index.ts",
     plugins: [
         new TypeDocWebpackPlugin(
@@ -37,16 +36,6 @@ const config: webpack.Configuration = {
         library: "qr",
         libraryTarget: "umd",
         umdNamedDefine: true
-    },
-    externals: {
-        lodash: {
-            root: "_",
-            commonjs: "lodash",
-            commonjs2: "lodash"
-        }
-    },
-    optimization: {
-        minimize: true
     }
 }
 export default config;

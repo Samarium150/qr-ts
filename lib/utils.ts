@@ -1,5 +1,7 @@
 /**
- * This module contains all functions/classes/constants to generate a QR code
+ * This module contains all functions/classes/constants to generate a QR code. \
+ * This is not exported to user.
+ *
  * @packageDocumentation
  * @module utils
  * @preferred

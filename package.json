@@ -1,14 +1,15 @@
 {
     "name": "qr.js",
-    "version": "0.1.0a",
+    "version": "0.1.0",
     "description": "Create beautiful QR code easily",
     "private": true,
     "main": "./public/javascripts/library.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "webpack",
+        "build": "webpack --config webpack.prod.ts",
         "start": "node ./bin/www",
-        "dev": "nodemon ./bin/www"
+        "devBuild": "webpack --config webpack.dev.ts",
+        "devStart": "nodemon ./bin/www"
     },
     "dependencies": {
         "express": "^4.17.1",
@@ -27,6 +28,7 @@
         "@typescript-eslint/parser": "^3.9.1",
         "emoji-regex": "^9.0.0",
         "encoding-japanese": "^1.0.30",
+        "esbuild-minimizer-webpack-plugin": "^1.0.0-beta.2",
         "eslint": "^7.7.0",
         "eslint-loader": "^4.0.2",
         "lodash": "^4.17.20",
@@ -39,22 +41,20 @@
         "typedoc-plugin-extras": "^1.1.6",
         "typescript": "^3.9.7",
         "webpack": "^4.44.1",
-        "webpack-cli": "^3.3.12"
+        "webpack-cli": "^3.3.12",
+        "webpack-merge": "^5.1.2"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/csc309-summer-2020/js-library-shenjunw.git"
     },
     "keywords": [
-        "QR code"
+        "QR code", "front-end"
     ],
     "author": "Junwen Shen",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/csc309-summer-2020/js-library-shenjunw/issues"
     },
-    "homepage": "https://github.com/csc309-summer-2020/js-library-shenjunw#readme",
-    "optionalDependencies": {
-        "fsevents": "^2.1.3"
-    }
+    "homepage": "https://github.com/csc309-summer-2020/js-library-shenjunw#readme"
 }
