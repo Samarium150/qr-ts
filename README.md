@@ -3,13 +3,13 @@
 Download from the latest release or build from source
 
 ### The Latest Release
-[Link](https://github.com/csc309-summer-2020/js-library-shenjunw/releases/latest)
+[Link](https://github.com/Samarium150/qr.ts/releases/latest)
 
 ### Build from Source
 
 #### Clone Repository
 ```
-git clone https://github.com/csc309-summer-2020/js-library-shenjunw.git
+git clone https://github.com/Samarium150/qr.ts.git
 ```
 
 #### Install Dependencies
