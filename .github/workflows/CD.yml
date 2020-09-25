@@ -1,0 +1,19 @@
+# This is a basic workflow that is manually triggered
+name: Build
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on: [workflow_dispatch, push]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: npm install and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1.4.3
+        with: 
+          node-version: 14.6
+      - run: npm install
+      - run: npm build
+  
