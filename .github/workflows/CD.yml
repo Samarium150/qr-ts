@@ -17,4 +17,4 @@ jobs:
           node-version: 14.6
           check-latest: true
       - run: npm install
-      - run: npm build
+      - run: npm run build
