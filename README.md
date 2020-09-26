@@ -1,4 +1,4 @@
-# qr.js
+# qr.ts
 ## Getting Started
 Download from the latest release or build from source
 
@@ -52,9 +52,9 @@ const qr = require("./library");
 Now you can call API functions in your scripts on `qr`.
 
 ## Further Development
-- Move to personal repository (instead of organization's)
-- Adding tests
-- Publish to NPM
+- [x] Move to personal repository (instead of organization's)
+- [ ] Adding tests
+- [ ] Publish to NPM
 
 ## Deployment
 [Landing Page](https://blooming-retreat-31199.herokuapp.com) <br>

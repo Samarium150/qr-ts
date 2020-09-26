@@ -1,5 +1,5 @@
 {
-    "name": "qr.js",
+    "name": "qr.ts",
     "version": "0.1.0",
     "description": "Create beautiful QR code easily",
     "private": true,
@@ -44,9 +44,12 @@
         "webpack-cli": "^3.3.12",
         "webpack-merge": "^5.1.2"
     },
+    "optionalDependencies": {
+        "fsevents": "^2.1.3"
+    },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/csc309-summer-2020/js-library-shenjunw.git"
+        "url": "git+https://github.com/Samarium150/qr.ts"
     },
     "keywords": [
         "QR code",
