@@ -1,0 +1,19 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: prepare
+        uses: DerYeger/yarn-setup-action@master
+        with:
+          node-version: 16
+      - name: build
+        run: yarn build

@@ -1,0 +1,39 @@
+{
+  "name": "qr.ts",
+  "version": "0.1.0",
+  "description": "Create QR code easily",
+  "keywords": ["QR code"],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "repository": "https://github.com/Samarium150/qr.ts.git",
+  "author": "Samarium <28302241+Samarium150@users.noreply.github.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "gulp",
+    "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s"
+  },
+  "dependencies": {
+    "encoding-japanese": "^1.0.30"
+  },
+  "devDependencies": {
+    "@types/gulp": "^4.0.9",
+    "@types/node": "^16.7.10",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "conventional-changelog-cli": "^2.1.1",
+    "esbuild": "^0.12.25",
+    "eslint": "^7.32.0",
+    "gulp": "^4.0.2",
+    "gulp-esbuild": "^0.8.7",
+    "gulp-typedoc": "^3.0.1",
+    "runtypes": "^6.4.0",
+    "ts-node": "^10.2.1",
+    "typedoc": "^0.21.9",
+    "typescript": "^4.4.2"
+  },
+  "resolutions": {
+    "trim-off-newlines": "https://github.com/Samarium150/trim-off-newlines",
+    "uuid": "^8.3.2"
+  }
+}
