@@ -1,6 +1,7 @@
 # qr-ts
 
 [![GitHub top language](https://img.shields.io/github/languages/top/Samarium150/qr.ts?style=flat)](https://www.typescriptlang.org/)
+[![Build](https://github.com/Samarium150/qr-ts/actions/workflows/build.yml/badge.svg)](https://github.com/Samarium150/qr-ts/actions/workflows/build.yml)
 [![LICENSE](https://img.shields.io/github/license/Samarium150/qr.ts?style=flat)](https://github.com/Samarium150/qr.ts/blob/master/LICENSE)
 
 Create QR code on HTML canvas.
@@ -23,9 +24,9 @@ yarn add qr-ts
 ```html
 <body>
 <div id="main"></div>
-<script type="application/javascript" src="../dist/browser/index.js"></script>
+<script type="application/javascript" src="node_modules/qr-ts/dist/browser/index.js"></script>
 <script>
-    const code = qr.renderOnCanvas(qr.generate("test"), "output");
+  const code = qr.renderOnCanvas(qr.generate("test"), "output");
   const prev = document.getElementById("output");
   if (prev != null) prev.replaceWith(code);
   else document.getElementById("main").appendChild(code);
@@ -52,4 +53,4 @@ i.e. `node -r esm index.mjs` or `ts-node index.ts`
 
 ## Deployment
 
-[Documentations](https://samarium150.github.io/qr.ts/)
+[Documentations](https://samarium150.github.io/qr-ts/)
