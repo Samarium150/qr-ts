@@ -1,6 +1,6 @@
 {
   "name": "qr-ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create QR code on HTML canvas",
   "keywords": [
     "QR code"
@@ -15,7 +15,7 @@
       "import": "./dist/esm/index.js"
     }
   },
-  "repository": "https://github.com/Samarium150/qr.ts.git",
+  "repository": "https://github.com/Samarium150/qr-ts.git",
   "author": "Samarium <28302241+Samarium150@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
