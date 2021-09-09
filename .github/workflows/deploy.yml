@@ -1,0 +1,33 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: prepare
+        uses: DerYeger/yarn-setup-action@master
+        with:
+          node-version: 16
+      - name: build
+        run: yarn build
+      - name: deploy docs
+        run: |
+          cd dist/docs
+          git config --global user.email "28302241+samarium150@users.noreply.github.com"
+          git config --global user.name "Samarium"
+          git init
+          git add -A
+          git commit -m "chore: deploy"
+          git branch -M gh-pages
+          git push -f https://Samarium150:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git gh-pages
+      - name: publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}

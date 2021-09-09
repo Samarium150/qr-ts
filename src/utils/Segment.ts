@@ -1,9 +1,8 @@
 /**
- * @packageDocumentation
  * @module utils
  */
 
-import {Mode} from "./types";
+import { Mode } from "./types";
 
 /**
  * The class for containing encoded string data
@@ -20,9 +19,9 @@ export default class Segment {
     /**
      * Create a new Segment object
      *
-     * @param mode  The encoding mode
-     * @param len  The number of characters
-     * @param bits  The binary data
+     * @param mode - The encoding mode
+     * @param len - The number of characters
+     * @param bits - The binary data
      */
     public constructor(mode: Mode, len: number, bits: Array<number>) {
         this.mode = mode;

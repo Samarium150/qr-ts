@@ -1,12 +1,10 @@
 /**
- * @packageDocumentation
  * @module utils
  */
-
-import {Version, Ecl, Position, Mask} from "./types";
-import {ALIGNMENT_POSITION, VERSION_INFO, PENALTIES, FORMAT_INFO, ECL} from "./constants";
-import {DataModule, FunctionalModule, MaskModule, Module, QuietModule} from "./Module";
-import {Codeword} from "./Codeword";
+import { Version, Ecl, Position, Mask } from "./types";
+import { ALIGNMENT_POSITION, VERSION_INFO, PENALTIES, FORMAT_INFO, ECL } from "./constants";
+import { DataModule, FunctionalModule, MaskModule, Module, QuietModule } from "./Module";
+import { Codeword } from "./Codeword";
 
 /**
  * The class for containing all information to generate a QR code
@@ -25,9 +23,9 @@ export default class QR {
     /**
      * Create a new QR instance
      *
-     * @param version   The version of QR code
-     * @param ecl   The error correction level
-     * @param modules  The initial data for copying
+     * @param version - The version of QR code
+     * @param ecl - The error correction level
+     * @param modules - The initial data for copying
      */
     constructor(version: Version, ecl: Ecl, modules?: Array<Array<Module>>) {
         this.version = version;
@@ -92,8 +90,8 @@ export default class QR {
 
     /** Draw the finder patterns */
     private drawFinderPatterns(): void {
-        const pos: Array<Position> = [[0, 0], [this.size - 7, 0], [0, this.size - 7]];
-        for (const [x, y] of pos) {
+        const pos: Array<Position> = [ [ 0, 0 ], [ this.size - 7, 0 ], [ 0, this.size - 7 ] ];
+        for (const [ x, y ] of pos) {
             for (let i = 0; i < 7; i++) {
                 for (let j = 0; j < 7; j++) {
                     if (i == 0 || i == 6)
@@ -109,12 +107,12 @@ export default class QR {
 
     /** Draw the separator patterns */
     private drawSeparatorPatterns(): void {
-        const pos1: Array<Position> = [[7, 0], [7, this.size - 8], [this.size - 8, 0]],
-            pos2: Array<Position> = [[0, 7], [0, this.size - 8], [this.size - 8, 7]];
-        for (const [x, y] of pos1) {
+        const pos1: Array<Position> = [ [ 7, 0 ], [ 7, this.size - 8 ], [ this.size - 8, 0 ] ],
+            pos2: Array<Position> = [ [ 0, 7 ], [ 0, this.size - 8 ], [ this.size - 8, 7 ] ];
+        for (const [ x, y ] of pos1) {
             for (let i = 0; i < 8; i++) this.modules[x][y + i] = new FunctionalModule("SEPARATOR", false);
         }
-        for (const [x, y] of pos2) {
+        for (const [ x, y ] of pos2) {
             for (let i = 0; i < 8; i++) this.modules[x + i][y] = new FunctionalModule("SEPARATOR", false);
         }
     }
@@ -128,7 +126,7 @@ export default class QR {
             for (const y of p) {
                 const module: Module = this.modules[x][y];
                 if (module instanceof FunctionalModule && (module as FunctionalModule).getType() != "TIMING") continue;
-                const pos: Position = [x - 2, y - 2];
+                const pos: Position = [ x - 2, y - 2 ];
                 for (let i = 0; i < 5; i++) {
                     for (let j = 0; j < 5; j++) {
                         const px: number = pos[0] + i, py: number = pos[1] + j;
@@ -188,7 +186,7 @@ export default class QR {
                     const x: number = upward ? this.size - row - 1 : row;
                     const y: number = col - i;
                     if (this.modules[x][y] instanceof FunctionalModule) continue;
-                    result.push([x, y]);
+                    result.push([ x, y ]);
                 }
             }
         }
@@ -202,7 +200,7 @@ export default class QR {
      * @param path  The array of position
      */
     public placeCodeword(data: Array<Codeword>, path: Array<Position>): void {
-        path.forEach(([x, y], index) => {
+        path.forEach(([ x, y ], index) => {
             const module: Module = new DataModule();
             if (index < data.length * 8) {
                 const codeword: Codeword = data[index >>> 3];
@@ -267,8 +265,8 @@ export default class QR {
     /** Compute the penalty for the class */
     public computePenalty(): number {
         let dark = 0, p1 = 0, p2 = 0, p3 = 0;
-        const sim1: Array<boolean> = [true, false, true, true, true, false, true, false, false, false, false],
-            sim2: Array<boolean> = [false, false, false, false, true, false, true, true, true, false, true],
+        const sim1: Array<boolean> = [ true, false, true, true, true, false, true, false, false, false, false ],
+            sim2: Array<boolean> = [ false, false, false, false, true, false, true, true, true, false, true ],
             r1 = (result: boolean, curr: boolean, index: number) => result && (curr == sim1[index]),
             r2 = (result: boolean, curr: boolean, index: number) => result && (curr == sim2[index]);
         for (let i = 0; i < this.size; i++) {

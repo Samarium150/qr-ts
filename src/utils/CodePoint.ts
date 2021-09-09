@@ -1,8 +1,6 @@
 /**
- * @packageDocumentation
  * @module utils
  */
-
 /**
  * The class for containing the UTF-16 character
  * and corresponding UTF-8 codepoints array of input string
@@ -16,7 +14,7 @@ export default class CodePoint {
 
     /**
      * Create a new CodePoint instance
-     * @param char  A character of the input string
+     * @param char - A character of the input string
      */
     constructor(char: string) {
         this.utf16_char = char;
@@ -27,7 +25,7 @@ export default class CodePoint {
      * Convert the given *\<str\>* to a UTF-8 codepoints array. \
      * Source code {@link https://gist.github.com/joni/3760795#file-toutf8array-js | HERE}
      *
-     * @param str  The input string
+     * @param str - The input string
      */
     public static toUTF8Array(str: string): Array<number> {
         const result: Array<number> = [];

@@ -1,61 +1,55 @@
-# qr.ts
-## Getting Started
-Download from the latest release or build from source
+# qr-ts
 
-### The Latest Release
-[Link](https://github.com/Samarium150/qr.ts/releases/latest)
+[![GitHub top language](https://img.shields.io/github/languages/top/Samarium150/qr.ts?style=flat)](https://www.typescriptlang.org/)
+[![LICENSE](https://img.shields.io/github/license/Samarium150/qr.ts?style=flat)](https://github.com/Samarium150/qr.ts/blob/master/LICENSE)
 
-### Build from Source
+Create QR code on HTML canvas.
 
-#### Clone Repository
-```
-git clone https://github.com/Samarium150/qr.ts.git
-```
+The main purpose of creating this library is learning TypeScript, different build tools and the QR code algorithm.
 
-#### Install Dependencies
-Prerequisite: Node.js installed
-```
-npm install
-```
+For production usage, please choose [node-qrcode](https://github.com/soldair/node-qrcode).
 
-#### Build the Library
-In production mode:
-```
-npm run build
-```
-In development mode:
-```
-npm run devBuild
-```
-The compiled JavaScript file is in `./public/javascripts/` folder, named `library.js`
+The original version is on `legacy` branch, which was developed during an undergraduate web-developing course.
 
-#### Start Local Landing / Example Pages
-Start an Express server at localhost:3000
-```
-npm run start
-```
-Start the server by [`nodemon`](https://github.com/remy/nodemon)
-```
-npm run dev
+## Installation
+
+```shell
+yarn add qr-ts
 ```
 
-### Usage
+## Usage
 
-#### Browser
-Put the script tag `<script src="library.js">`  before `</body>` tag
+### Browser
+```html
+<body>
+<div id="main"></div>
+<script type="application/javascript" src="../dist/browser/index.js"></script>
+<script>
+    const code = qr.renderOnCanvas(qr.generate("test"), "output");
+  const prev = document.getElementById("output");
+  if (prev != null) prev.replaceWith(code);
+  else document.getElementById("main").appendChild(code);
+</script>
+</body>
+```
 
-#### CommonJS
+### CommonJS
 ```Javascript
-const qr = require("./library");
+const qr = require("qr-ts");
+// This prints out the instance of QR class, see docs for more info
+console.log(qr.generate("test")); 
 ```
+run with `node index.js`
 
-Now you can call API functions in your scripts on `qr`.
+### ESM/TypeScript
+```typescript
+import * as qr from "qr-ts";
+console.log(qr.generate("test")); // same as above
+```
+run with `esm` or `ts-node`
 
-## Further Development
-- [x] Move to personal repository (instead of organization's)
-- [ ] Adding tests
-- [ ] Publish to NPM
+i.e. `node -r esm index.mjs` or `ts-node index.ts`
 
 ## Deployment
-[Landing Page](https://blooming-retreat-31199.herokuapp.com) <br>
-[Documentations](https://blooming-retreat-31199.herokuapp.com/docs/index.html)
+
+[Documentations](https://samarium150.github.io/qr.ts/)

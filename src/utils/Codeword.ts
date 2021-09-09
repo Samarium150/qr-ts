@@ -1,8 +1,6 @@
 /**
- * @packageDocumentation
  * @module utils
  */
-
 /**
  * The class containing 8-bit value and indices information
  */
@@ -22,7 +20,7 @@ abstract class Codeword {
     /**
      * Create a new Codeword instance
      *
-     * @param value  The 8-bit value represented by an integer
+     * @param value - The 8-bit value represented by an integer
      * @protected
      */
     protected constructor(value: number) {
@@ -33,28 +31,28 @@ abstract class Codeword {
     /**
      * Set the index of a block
      *
-     * @param value  The index of a block
+     * @param value - The index of a block
      */
     public setBlockIndex(value: number): void {this.block_index = value;}
 
     /**
      * Set the index of itself in a block
      *
-     * @param value  The index of itself
+     * @param value - The index of itself
      */
     public setIndex(value: number): void {this.index = value;}
 
     /**
      * Set the index of itself through all blocks before interleaving
      *
-     * @param value  The index through all blocks before interleaving
+     * @param value - The index through all blocks before interleaving
      */
     public setPreInterleaveIndex(value: number): void {this.pre_interleave_index = value;}
 
     /**
      * Set the index of itself through all blocks after interleaving
      *
-     * @param value  The index through all blocks after interleaving
+     * @param value - The index through all blocks after interleaving
      */
     public setPostInterleaveIndex(value: number): void {this.post_interleave_index = value;}
 
@@ -69,7 +67,7 @@ class DataCodeword extends Codeword {
     /**
      * Create a new DataCodeword instance
      *
-     * @param value  The 8-bit value of encoded data
+     * @param value - The 8-bit value of encoded data
      */
     constructor(value: number) {
         super(value);
@@ -83,7 +81,7 @@ class ECCodeword extends Codeword {
     /**
      * Create a new ECCodeword instance
      *
-     * @param value  The 8-bit value of error correction data
+     * @param value - The 8-bit value of error correction data
      */
     constructor(value: number) {
         super(value);

@@ -1,12 +1,9 @@
 /**
- * @packageDocumentation
  * @module utils
  */
-
 /**
  * The class for Reed-Solomon error correction process
- * Source code {@link https://github.com/nayuki/Nayuki-web-published-code/blob/master\
- * /creating-a-qr-code-step-by-step/instrumented-qrcodegen.ts#L525 | HERE}
+ * Source code {@link https://github.com/nayuki/Nayuki-web-published-code/blob/master/creating-a-qr-code-step-by-step/instrumented-qrcodegen.ts#L525 | HERE}
  */
 export default class RSECG {
 

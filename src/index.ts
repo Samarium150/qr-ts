@@ -1,62 +1,85 @@
 /**
  * This is the entrypoint of qr.js library
- * @packageDocumentation
  * @module QR
  */
 
-import Options from "./Options";
-import {Ecl, Mask, Version} from "./types";
-import * as utils from "./utils";
+import { Ecl, Mask, Version, GeneratorOptions, RenderOptions } from "./utils/types";
+import {
+    generateCodePoint,
+    generateOptimalSegments,
+    generateCodeword,
+    generateDataCodeword,
+    generateRawQR,
+    computeOptimalMask,
+    generateQR
+} from "./utils";
+import QR from "./utils/QR";
+import CodePoint from "./utils/CodePoint";
+import Segment from "./utils/Segment";
+import { Codeword } from "./utils/Codeword";
+import { Module, QuietModule } from "./utils/Module";
+
+const defaultGeneratorOptions: GeneratorOptions = {
+    version: 1,
+    ecl: "LOW",
+    forced: false,
+    mask: -1,
+};
+
+const defaultRenderOptions: RenderOptions = {
+    c1: "#000000",
+    c2: "#FFFFFF",
+    size: 10
+};
 
 /**
- * Alias *console.log* function for developer on debugging purposes
+ * Wrap up all steps for generating the QR code
  *
- * @param message  The same as *console.log*
- * @param optionalParams  The same as *console.log*
+ * @param text - The string that should be encoded to QR code
+ * @param options - Options for how to generate the QR code
  */
-function debug(message?: unknown, ...optionalParams: unknown[]): void {
-    console.log("qr.js DEBUG:", message, ...optionalParams);
+function generate(text: string, options: GeneratorOptions = defaultGeneratorOptions): QR {
+    const version: Version = options.version as Version,
+        ecl: Ecl = options.ecl as Ecl, forced: boolean = options.forced as boolean,
+        mask: Mask = options.mask as Mask, codePoints: Array<CodePoint> = generateCodePoint(text),
+        [ optimalVersion, segments ]: [Version, Array<Segment>] = generateOptimalSegments(codePoints, version, ecl, forced),
+        codeword: Array<Codeword> = generateCodeword(generateDataCodeword(segments, optimalVersion, ecl), optimalVersion, ecl),
+        code: QR = generateRawQR(codeword, optimalVersion, ecl),
+        optimalMask: [number, QR] = (mask == -1) ? computeOptimalMask(code) : [ mask, code.generateMask(mask) ];
+    generateQR(code, optimalMask);
+    code.extend();
+    return code;
 }
 
 /**
- * Generate a QR code in an HTML canvas according to *\<text\>* and *\<options\>*
- *
- * @param text  The string that should be encoded to QR code
- * @param id  The ID of HTMLCanvasElement output
- * @param options  Options for how the QR code generated, details {@link Options | HERE}
+ * Render QR code on HTML canvas
+ * @param code - the QR code
+ * @param id - the id of the canvas element
+ * @param options - options for how to render the QR code
  */
-function generate(text: unknown, id: unknown, options?: Options): HTMLCanvasElement {
-    if (typeof text != "string" || text.length == 0) throw Error("Invalid Input String");
-    if (typeof id != "string" || text.length == 0) throw Error("Invalid Input ID");
-    const setting: Options = {
-        version: 1,
-        ecl: "LOW",
-        forced: false,
-        mask: -1,
-        c1: "#000000",
-        c2: "#FFFFFF",
-        size: 10
-    };
-    if (options != undefined) {
-        if (options.version != undefined && Version.check(options.version)) setting.version = options.version;
-        if (options.ecl != undefined && Ecl.check(options.ecl)) setting.ecl = options.ecl;
-        if (typeof options.forced == "boolean") setting.forced = options.forced;
-        if (options.mask != undefined && Mask.check(options.mask)) setting.mask = options.mask;
-
-        if (utils.isColor(options.c1)) setting.c1 = options.c1;
-        else if (options.c1 != undefined) throw Error("Invalid hex color c1");
-
-        if (utils.isColor(options.c2)) setting.c2 = options.c2;
-        else if (options.c2 != undefined) throw Error("Invalid hex color c2");
-
-        if (typeof options.size != "number" && options.size != undefined) throw Error("Invalid size choice");
-        else if (typeof options.size == "number") setting.size = options.size;
+function renderOnCanvas(code: QR, id: string, options: RenderOptions = defaultRenderOptions): HTMLCanvasElement {
+    const output: HTMLCanvasElement = document.createElement("canvas"),
+        context: CanvasRenderingContext2D | null = output.getContext("2d"),
+        numBlock: number = code.getSize() + 8,
+        size: number = options.size as number;
+    if (!context) throw Error("Cannot get canvas context");
+    output.id = id;
+    output.width = numBlock * size;
+    output.height = numBlock * size;
+    const modules: Array<Array<Module>> = code.getModules();
+    for (let row = 0; row < numBlock; row++) {
+        for (let col = 0; col < numBlock; col++) {
+            const module: Module = modules[row][col];
+            context.fillStyle = (module instanceof QuietModule) ?
+                "#FFFFFF" : (module.getColor()) ? options.c1 as string : options.c2 as string;
+            context.fillRect(col * size, row * size, size, size);
+        }
     }
-    console.log(setting);
-    return utils.generate(text, id, setting);
+    context.stroke();
+    return output;
 }
 
 export {
-    debug,
-    generate
+    generate,
+    renderOnCanvas
 };

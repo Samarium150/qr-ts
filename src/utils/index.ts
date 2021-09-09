@@ -1,30 +1,25 @@
 /**
- * This module contains all functions/classes/constants to generate a QR code. \
+ * This module contains all functions/classes/constants to generate a QR code.
  * This is not exported to user.
- *
- * @packageDocumentation
  * @module utils
- * @preferred
  */
 
 import * as constants from "./constants";
-import {Mode, Version, Ecl, Position, Mask} from "./types";
+import { Mode, Version, Ecl, Position } from "./types";
 import Segment from "./Segment";
 import CodePoint from "./CodePoint";
-import {Codeword, DataCodeword, ECCodeword} from "./Codeword";
+import { Codeword, DataCodeword, ECCodeword } from "./Codeword";
 import RSECG from "./RSECG";
 import QR from "./QR";
-import emoji_regex from "emoji-regex";
-import {convert} from "encoding-japanese";
-import Options from "./Options";
-import {Module, QuietModule} from "./Module";
+import emojiRegex from "emoji-regex";
+import { convert } from "encoding-japanese";
 
 /**
  * Determine whether the given *\<char\>* is {@link ALPHANUMERIC | alphanumeric}
  *
- * @param char  The character that should be tested
+ * @param char - The character that should be tested
  *
- * @return  TRUE if *\<char\>* is alphanumeric, FALSE otherwise
+ * @returns TRUE if *\<char\>* is alphanumeric, FALSE otherwise
  */
 function isAlphanumeric(char: string): boolean {
     return constants.ALPHANUMERIC.indexOf(char) != -1;
@@ -32,47 +27,47 @@ function isAlphanumeric(char: string): boolean {
 
 /**
  * Determine whether the given *\<char\>* is {@link NUMERIC | numeric}
- * @param char  The character that should be tested
+ * @param char - The character that should be tested
  *
- * @return  TRUE if *\<char\>* is numeric, FALSE otherwise
+ * @returns TRUE if *\<char\>* is numeric, FALSE otherwise
  */
 function isNumeric(char: string): boolean {
     return constants.NUMERIC.indexOf(char) != -1;
 }
 
 /**
- * Determine whether the given *\<char\>* is able to encode in Shift-JIS. \
+ * Determine whether the given *\<char\>* is able to encode in Shift-JIS.
  * The code point of a valid char is in the ranges
  * {@link KANJI.A | KANJI.A:0x8140} to {@link KANJI.B | KANJI.B:0x9FFC}
  * and
- * {@link KANJI.C | KANJI.C:0xE040} to {@link KANJI.D | KANJI.D:0xEBBF} \
+ * {@link KANJI.C | KANJI.C:0xE040} to {@link KANJI.D | KANJI.D:0xEBBF}
  * External Library {@link https://github.com/polygonplanet/encoding.js | encoding-japanese} is used here.
  *
- * @param char  The character that should be tested
+ * @param char - The character that should be tested
  *
- * @return  TRUE if *\<char\>* is able to encode in Shift-JIS, FALSE otherwise
+ * @returns TRUE if *\<char\>* is able to encode in Shift-JIS, FALSE otherwise
  */
 function isKanji(char: string): boolean {
-    return (convert(char, {to: "SJIS", type: "array"}) as Array<number>).indexOf(63) == -1;
+    return (convert(char, { to: "SJIS", type: "array" }) as Array<number>).indexOf(63) == -1;
 }
 
 /**
- * Determine whether the given *\<str\>* is a valid hex color string. \
+ * Determine whether the given *\<str\>* is a valid hex color string.
  * It should start with "#" and contain 3 or 6 hex number.
  *
- * @param str  The string that should be tested, can be undefined
+ * @param str - The string that should be tested, can be undefined
  *
- * @return  TRUE if *\<str\>* is valid or undefined, FALSE otherwise
+ * @returns TRUE if *\<str\>* is valid or undefined, FALSE otherwise
  */
 function isColor(str?: string): boolean {
-    return /^((0x){0,1}|#{0,1})([0-9A-F]{8}|[0-9A-F]{6})$/ig.test(str as string);
+    return /^((0x)?|#?)([0-9A-F]{8}|[0-9A-F]{6})$/ig.test(str as string);
 }
 
 /**
  * Convert a decimal number *\<n\>* to binary, represented by a array of number (0 and 1)
  *
- * @param n  The number that should be convert
- * @param length  The length of the output array
+ * @param n - The number that should be convert
+ * @param length - The length of the output array
  */
 function decToBin(n: number, length: number): Array<number> {
     if (length < 0 || length > 31 || n >>> length != 0) throw Error("Value Error");
@@ -85,10 +80,10 @@ function decToBin(n: number, length: number): Array<number> {
  * Retrieve the constant data of the character count indicator
  * by the given encoding *\<mode\>* and *\<version\>*
  *
- * @param mode  The encoding mode
- * @param version  The version of QR code
+ * @param mode - The encoding mode
+ * @param version - The version of QR code
  *
- * @return  A character count indicator number
+ * @returns A character count indicator number
  */
 function getModeCharCount(mode: Mode, version: Version): number {
     return constants.MODE[mode].charCount[Math.floor((version + 7) / 17)];
@@ -98,8 +93,8 @@ function getModeCharCount(mode: Mode, version: Version): number {
  * Retrieve the constant data of how many error correction codewords
  * per block are required by the given *\<version\>* and *\<ecl\>*
  *
- * @param version  The version of QR code
- * @param ecl  The error correction level
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
  */
 function getNumEcCodeword(version: Version, ecl: Ecl): number {
     return constants.EC_CODEWORD_PER_BLOCK[constants.ECL[ecl]][version];
@@ -109,8 +104,8 @@ function getNumEcCodeword(version: Version, ecl: Ecl): number {
  * Retrieve the constant data of how many number error correction blocks
  * are required by the given *\<version\>* and *\<ecl\>*
  *
- * @param version  The version of QR code
- * @param ecl  The error correction level
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
  */
 function getNumEcBlocks(version: Version, ecl: Ecl): number {
     return constants.NUM_EC_BLOCK[constants.ECL[ecl]][version];
@@ -120,8 +115,8 @@ function getNumEcBlocks(version: Version, ecl: Ecl): number {
  * Retrieve the constant data of the capacity of a QR code
  * by the given *\<version\>* and *\<ecl\>*
  *
- * @param version  The version of QR code
- * @param ecl  The error correction level
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
  */
 function getCapacity(version: Version, ecl: Ecl): number {
     return constants.CAPACITY[version][constants.ECL[ecl]];
@@ -130,7 +125,7 @@ function getCapacity(version: Version, ecl: Ecl): number {
 /**
  * Compute how many codeword are required for the given *\<version\>*
  *
- * @param version  The version of QR code
+ * @param version - The version of QR code
  */
 function computeNumRawCodeword(version: Version): number {
     let result: number = (16 * version + 128) * version + 64;
@@ -147,7 +142,7 @@ function computeNumRawCodeword(version: Version): number {
  * *\<segments\>* and *\<version\>*
  *
  * @param segments
- * @param version  The version of QR code
+ * @param version - The version of QR code
  */
 function computeNumCodewords(segments: Array<Segment>, version: Version): number {
     let result = 0;
@@ -160,16 +155,17 @@ function computeNumCodewords(segments: Array<Segment>, version: Version): number
 }
 
 /**
- * Step 1 for generating a QR code. \
- * Generate an array of CodePoint objects by the given *\<str\>*. \
- * Each UTF-16 character in the string corresponds to a CodePoint instance. \
+ * Step 1 for generating a QR code.
+ * Generate an array of CodePoint objects by the given *\<str\>*.
+ * Each UTF-16 character in the string corresponds to a CodePoint instance.
  * External library {@link https://github.com/mathiasbynens/emoji-regex | emoji-regex}
  * is used here for detecting emoji input.
  *
- * @param str  The string that is used for generating
+ * @param str - The string that is used for generating
+ * @internal
  */
 function generateCodePoint(str: string): Array<CodePoint> {
-    const regex: RegExp = emoji_regex(),
+    const regex: RegExp = emojiRegex(),
         points: Array<CodePoint> = [];
     if (str.search(regex) != -1) {
         const break_points: Array<number> = [], indices: Array<number> = [];
@@ -191,16 +187,16 @@ function generateCodePoint(str: string): Array<CodePoint> {
 }
 
 /**
- * Step 2 for generating a QR code. \
- * Generate a single data segment by the given *\<codepoints\>* and *\<mode\>*. \
+ * Step 2 for generating a QR code.
+ * Generate a single data segment by the given *\<codepoints\>* and *\<mode\>*.
  * Assuming all CodePoint objects in the array are able to encoding in this *\<mode\>*.\
  * External Library {@link https://github.com/polygonplanet/encoding.js | encoding-japanese}
  * is used here for converting UTF-8 codepoints to Shift-JIS codepoints.
  *
- * @param codePoints  The array of CodePoint objects for encoding
- * @param mode  The encoding mode
+ * @param codePoints - The array of CodePoint objects for encoding
+ * @param mode - The encoding mode
  *
- * @return  An encoded data segment
+ * @returns An encoded data segment
  */
 function generateSegmentFromSingleMode(codePoints: Array<CodePoint>, mode: Mode): Segment {
     const data: Array<number> = [];
@@ -235,7 +231,7 @@ function generateSegmentFromSingleMode(codePoints: Array<CodePoint>, mode: Mode)
                     break;
                 }
                 case "KANJI": {
-                    const codes: Array<number> = convert(point.getChar(), {to: "SJIS", type: "array"}) as Array<number>,
+                    const codes: Array<number> = convert(point.getChar(), { to: "SJIS", type: "array" }) as Array<number>,
                         rep: number = parseInt(codes.map(code=>code.toString(16)).join(""), 16),
                         temp: string = (constants.KANJI.A <= rep && rep <= constants.KANJI.B) ?
                             (rep - constants.KANJI.A).toString(16).padStart(4, "0") :
@@ -258,18 +254,18 @@ function generateSegmentFromSingleMode(codePoints: Array<CodePoint>, mode: Mode)
 
 
 /**
- * Step 3 for generating a QR code. \
+ * Step 3 for generating a QR code.
  * Determine whether *\<segments\>* are able to encode
  * by the given **minimal** *\<version\>* and *\<ecl\>* if *\<forced\>* is set to TRUE,
  * otherwise compute the optimal version for encoding. The optimal version may equals to
  * the given minimal *\<version\>*
  *
- * @param segments  The array of encoded data segments
- * @param version  The version of QR code
- * @param ecl  The error correction level
- * @param forced  The option for forcing to use *\<version\>*
+ * @param segments - The array of encoded data segments
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
+ * @param forced - The option for forcing to use *\<version\>*
  *
- * @return  A minimal version if *\<forced\>* is set to TRUE, otherwise an optimal version
+ * @returns A minimal version if *\<forced\>* is set to TRUE, otherwise an optimal version
  */
 function computeOptimalVersion(segments: Array<Segment>, version: Version, ecl: Ecl, forced: boolean): Version {
     if (forced) {
@@ -296,18 +292,18 @@ function computeOptimalVersion(segments: Array<Segment>, version: Version, ecl: 
 }
 
 /**
- * Generate an array of data segments by the given *\<codePoints\>* and *\<modes\>*. \
+ * Generate an array of data segments by the given *\<codePoints\>* and *\<modes\>*.
  * Assuming the length of two arrays are the same.
  *
- * @param codePoints  The array of CodePoint objects for encoding
- * @param modes  The array of encoding modes
+ * @param codePoints - The array of CodePoint objects for encoding
+ * @param modes - The array of encoding modes
  *
- * @return  An array of encoded data segments
+ * @returns An array of encoded data segments
  */
 function generateSegmentsFromMultiModes(codePoints: Array<CodePoint>, modes: Array<Mode>): Array<Segment> {
     const queue: Array<[Mode, Array<CodePoint>]> = [];
     let i = 1, mode: Mode = modes[0];
-    const indices: Array<number> = [0], ms: Array<Mode> = [mode];
+    const indices: Array<number> = [ 0 ], ms: Array<Mode> = [ mode ];
     while (i < codePoints.length) {
         if (modes[i] != mode) {
             indices.push(i);
@@ -319,24 +315,24 @@ function generateSegmentsFromMultiModes(codePoints: Array<CodePoint>, modes: Arr
     indices.push(codePoints.length);
     i = 0;
     while (i < indices.length - 1) {
-        queue.push([ms[i], codePoints.slice(indices[i], indices[i+1])]);
+        queue.push([ ms[i], codePoints.slice(indices[i], indices[i+1]) ]);
         i++;
     }
     return queue.map(req => generateSegmentFromSingleMode(req[1], req[0]));
 }
 
 /**
- * Compute the array of optimal encoding modes by the given *\<codePoints\>* and *\<version\>*. \
+ * Compute the array of optimal encoding modes by the given *\<codePoints\>* and *\<version\>*.
  * Source code {@link https://github.com/nayuki/Nayuki-web-published-code/blob/master\
  * /optimal-text-segmentation-for-qr-codes/qr-code-optimal-text-segmentation.ts#L227 | HERE}
  *
- * @param codePoints  The array of CodePoint objects for encoding
- * @param version  The version of QR code
+ * @param codePoints - The array of CodePoint objects for encoding
+ * @param version - The version of QR code
  *
- * @return  An array of optimal encoding modes
+ * @returns An array of optimal encoding modes
  */
 function computeOptimalEncodingMode(codePoints: Array<CodePoint>, version: Version): Array<Mode> {
-    const modes: Array<Mode> = ["BYTE", "ALPHANUMERIC", "NUMERIC", "KANJI"],
+    const modes: Array<Mode> = [ "BYTE", "ALPHANUMERIC", "NUMERIC", "KANJI" ],
         header: Array<number> = modes.map(mode => 4 + getModeCharCount(mode, version) * 6),
         charModes: Array<Array<Mode>> = [];
     let prev: Array<number> = header.slice();
@@ -383,24 +379,25 @@ function computeOptimalEncodingMode(codePoints: Array<CodePoint>, version: Versi
 }
 
 /**
- * Alternative step 2 and 3 for generating a QR code. \
+ * Alternative step 2 and 3 for generating a QR code.
  * Generate an array of data segments and corresponding optimal version
  * by the given *\<codePoints\>*, *\<version\>* and *\<ecl\>*
  *
- * @param codePoints  The array of CodePoint objects for encoding
- * @param version  The version of QR code
- * @param ecl  The error correction level
- * @param forced  The option for forcing to use *\<version\>*
+ * @param codePoints - The array of CodePoint objects for encoding
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
+ * @param forced - The option for forcing to use *\<version\>*
  *
- * @return  An array of encoded data segments and corresponding optimal version
+ * @return - An array of encoded data segments and corresponding optimal version
+ * @internal
  */
 function generateOptimalSegments(codePoints: Array<CodePoint>, version: Version, ecl: Ecl, forced: boolean): [Version, Array<Segment>] {
     if (forced) {
         const modes: Array<Mode> = computeOptimalEncodingMode(codePoints, version),
             segments: Array<Segment> = generateSegmentsFromMultiModes(codePoints, modes);
-        return [computeOptimalVersion(segments, version, ecl, forced), segments];
+        return [ computeOptimalVersion(segments, version, ecl, forced), segments ];
     }
-    const versions: Array<Version> = [1, 10, 27, 40];
+    const versions: Array<Version> = [ 1, 10, 27, 40 ];
     if (versions.indexOf(version) == -1) {
         versions.push(version);
         versions.sort((a, b) => a - b);
@@ -411,25 +408,26 @@ function generateOptimalSegments(codePoints: Array<CodePoint>, version: Version,
         const modes: Array<Mode> = computeOptimalEncodingMode(codePoints, versions[i]),
             segments: Array<Segment> = generateSegmentsFromMultiModes(codePoints, modes),
             ver = computeOptimalVersion(segments, versions[i], ecl, forced);
-        if (versions[i] <= ver && ver <= versions[i+1]) return [ver, segments];
+        if (versions[i] <= ver && ver <= versions[i+1]) return [ ver, segments ];
     }
     const modes: Array<Mode> = computeOptimalEncodingMode(codePoints, versions[versions.length - 1]),
         segments: Array<Segment> = generateSegmentsFromMultiModes(codePoints, modes);
-    return [computeOptimalVersion(segments, versions[versions.length - 1], ecl, forced), segments];
+    return [ computeOptimalVersion(segments, versions[versions.length - 1], ecl, forced), segments ];
 }
 
 /**
- * Step 4 for generating a QR code. \
+ * Step 4 for generating a QR code.
  * Generate an array of data codeword
  * by the given *\<segments\>*, *\<version\>* and *\<ecl\>*
  *
- * @param segments  The array of encoded data segments
- * @param version  The version of QR code
- * @param ecl  The error correction level
+ * @param segments - The array of encoded data segments
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
+ * @internal
  */
 function generateDataCodeword(segments: Array<Segment>, version: Version, ecl: Ecl): Array<DataCodeword> {
     const result: Array<DataCodeword> = [], bits: Array<number> = [],
-        terminator: Array<number> = [0, 0, 0, 0], bitPad: Array<number> = [0, 0, 0, 0, 0, 0, 0];
+        terminator: Array<number> = [ 0, 0, 0, 0 ], bitPad: Array<number> = [ 0, 0, 0, 0, 0, 0, 0 ];
     segments.forEach(segment => {
         decToBin(constants.MODE[segment.getMode()].indicator, 4).forEach(bit => bits.push(bit));
         decToBin(segment.getCharLen(), getModeCharCount(segment.getMode(), version)).forEach(bit => bits.push(bit));
@@ -459,11 +457,11 @@ function generateDataCodeword(segments: Array<Segment>, version: Version, ecl: E
 
 /**
  * Split the array of data codeword, *\<data\>*, into blocks for module placement
- * by the given *\<version\>* and *\<ecl\>*
+ * by the given <version> and *\<ecl\>*
  *
- * @param data  The array of data codeword
- * @param version  The version of QR code
- * @param ecl  The error correction level
+ * @param data - The array of data codeword
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
  */
 function splitData(data: Array<DataCodeword>, version: Version, ecl: Ecl): Array<Array<DataCodeword>> {
     const num_blocks: number = getNumEcBlocks(version, ecl),
@@ -490,9 +488,9 @@ function splitData(data: Array<DataCodeword>, version: Version, ecl: Ecl): Array
  * Generate a blocks of error correction codeword
  * by the given *\<data_blocks\>*, *\<version\>* and *\<ecl\>*
  *
- * @param data_blocks  The 2D array of data codeword
- * @param version  The version of QR code
- * @param ecl  The error correction level
+ * @param data_blocks - The 2D array of data codeword
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
  */
 function generateECCodeword(data_blocks: Array<Array<DataCodeword>>, version: Version, ecl: Ecl): Array<Array<ECCodeword>> {
     const num_ec: number = getNumEcCodeword(version, ecl),
@@ -522,8 +520,8 @@ function generateECCodeword(data_blocks: Array<Array<DataCodeword>>, version: Ve
  * Interleave the given *\<data_blocks\>* and *\<ec_blocks\>*
  * according to a specific pattern
  *
- * @param data_blocks  The 2D array of data codeword
- * @param ec_blocks  The 2D array of error correction codeword
+ * @param data_blocks - The 2D array of data codeword
+ * @param ec_blocks - The 2D array of error correction codeword
  */
 function interleaveBlocks(data_blocks: Array<Array<DataCodeword>>, ec_blocks: Array<Array<ECCodeword>>): Array<Codeword> {
     const ec_block_length: number = ec_blocks[0].length,
@@ -549,14 +547,15 @@ function interleaveBlocks(data_blocks: Array<Array<DataCodeword>>, ec_blocks: Ar
 }
 
 /**
- * Step 5 for generating a QR code. \
+ * Step 5 for generating a QR code.
  * Generate an array of codeword including both data codeword
  * and error correction codeword
  * by the given *\<data\>*, *\<version\>* and *\<ecl\>*
  *
- * @param data  The array of data codeword
- * @param version  The version of QR code
- * @param ecl  The error correction level
+ * @param data - The array of data codeword
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
+ * @internal
  */
 function generateCodeword(data: Array<DataCodeword>, version: Version, ecl: Ecl): Array<Codeword> {
     const data_blocks: Array<Array<DataCodeword>> = splitData(data, version, ecl),
@@ -565,13 +564,14 @@ function generateCodeword(data: Array<DataCodeword>, version: Version, ecl: Ecl)
 }
 
 /**
- * Step 6 for generating a QR code. \
+ * Step 6 for generating a QR code.
  * Initializing a new QR object by the given *\<version\>* and *\<ecl\>*,
  * then place *\<data\>* into it.
  *
- * @param data  The array of codeword
- * @param version  The version of QR code
- * @param ecl  The error correction level
+ * @param data - The array of codeword
+ * @param version - The version of QR code
+ * @param ecl - The error correction level
+ * @internal
  */
 function generateRawQR(data: Array<Codeword>, version: Version, ecl: Ecl): QR {
     const qr: QR = new QR(version, ecl);
@@ -582,12 +582,13 @@ function generateRawQR(data: Array<Codeword>, version: Version, ecl: Ecl): QR {
 }
 
 /**
- * Step 7 for generating a QR code. \
+ * Step 7 for generating a QR code.
  * Compute the optimal mask pattern for the given raw *\<qr\>* object
  *
- * @param qr  The QR object
+ * @param qr - The QR object
  *
- * @return  A QR code mask and corresponding number
+ * @returns A QR code mask and corresponding number
+ * @internal
  */
 function computeOptimalMask(qr: QR): [number, QR] {
     const masks: Array<QR> = qr.generateAllMasks(),
@@ -598,60 +599,29 @@ function computeOptimalMask(qr: QR): [number, QR] {
             return copy.computePenalty();
         }),
         which: number = values.indexOf(Math.min(...values));
-    return [which, masks[which]];
+    return [ which, masks[which] ];
 }
 
 /**
- * Step 8 for generating a QR code. \
+ * Step 8 for generating a QR code.
  * Apply the *\<mask\>* to the raw *\<qr\>* object
  *
- * @param qr  The QR object
- * @param mask  The optimal QR code mask and corresponding number
+ * @param qr - The QR object
+ * @param mask - The optimal QR code mask and corresponding number
+ * @internal
  */
 function generateQR(qr: QR, mask: [number, QR]): void {
     qr.applyMask(mask[1]);
     qr.drawFormatPatterns(mask[0]);
 }
 
-/**
- * Wrap up all steps for generating and return a Canvas that has the QR code
- *
- * @param text  The string that should be encoded to QR code
- * @param id  The id of HTMLCanvasElement output
- * @param options  Options for how the QR code generated
- */
-function generate(text: string, id: string, options: Options): HTMLCanvasElement {
-    const version: Version = options.version as Version,
-        ecl: Ecl = options.ecl as Ecl, forced: boolean = options.forced as boolean,
-        mask: Mask = options.mask as Mask, codePoints: Array<CodePoint> = generateCodePoint(text),
-        [optimalVersion, segments]: [Version, Array<Segment>] = generateOptimalSegments(codePoints, version, ecl, forced),
-        codeword: Array<Codeword> = generateCodeword(generateDataCodeword(segments, optimalVersion, ecl), optimalVersion, ecl),
-        code: QR = generateRawQR(codeword, optimalVersion, ecl),
-        optimalMask: [number, QR] = (mask == -1) ? computeOptimalMask(code) : [mask, code.generateMask(mask)];
-    generateQR(code, optimalMask);
-    code.extend();
-    const output: HTMLCanvasElement = document.createElement("canvas"),
-        context: CanvasRenderingContext2D | null = output.getContext("2d"),
-        numBlock: number = code.getSize() + 8,
-        size: number = options.size as number;
-    if (!context) throw Error("Cannot get canvas context");
-    output.id = id;
-    output.width = numBlock * size;
-    output.height = numBlock * size;
-    const modules: Array<Array<Module>> = code.getModules();
-    for (let row = 0; row < numBlock; row++) {
-        for (let col = 0; col < numBlock; col++) {
-            const module: Module = modules[row][col];
-            context.fillStyle = (module instanceof QuietModule) ?
-                "#FFFFFF" : (module.getColor()) ? options.c1 as string : options.c2 as string;
-            context.fillRect(col * size, row * size, size, size);
-        }
-    }
-    context.stroke();
-    return output;
-}
-
 export {
     isColor,
-    generate
+    generateCodePoint,
+    generateOptimalSegments,
+    generateCodeword,
+    generateDataCodeword,
+    generateRawQR,
+    computeOptimalMask,
+    generateQR
 };

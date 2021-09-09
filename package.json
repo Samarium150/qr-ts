@@ -1,38 +1,54 @@
 {
-  "name": "qr.ts",
-  "version": "0.1.0",
-  "description": "Create QR code easily",
-  "keywords": ["QR code"],
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "name": "qr-ts",
+  "version": "1.0.0",
+  "description": "Create QR code on HTML canvas",
+  "keywords": [
+    "QR code"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/qr-ts.d.ts",
+  "exports": {
+    ".": {
+      "browers": "./dist/browser/index.js",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
+  },
   "repository": "https://github.com/Samarium150/qr.ts.git",
   "author": "Samarium <28302241+Samarium150@users.noreply.github.com>",
   "license": "MIT",
-  "private": true,
   "scripts": {
-    "build": "gulp",
-    "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s"
+    "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s",
+    "build": "gulp"
   },
   "dependencies": {
-    "encoding-japanese": "^1.0.30"
+    "emoji-regex": "^9.2.2",
+    "encoding-japanese": "^1.0.30",
+    "runtypes": "^6.4.0"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.18.7",
+    "@types/encoding-japanese": "^1.0.18",
     "@types/gulp": "^4.0.9",
-    "@types/node": "^16.7.10",
-    "@typescript-eslint/eslint-plugin": "^4.30.0",
-    "@typescript-eslint/parser": "^4.30.0",
+    "@types/node": "^16.9.0",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "@typescript-eslint/parser": "^4.31.0",
     "conventional-changelog-cli": "^2.1.1",
     "esbuild": "^0.12.25",
     "eslint": "^7.32.0",
     "gulp": "^4.0.2",
     "gulp-esbuild": "^0.8.7",
     "gulp-typedoc": "^3.0.1",
-    "runtypes": "^6.4.0",
     "ts-node": "^10.2.1",
     "typedoc": "^0.21.9",
+    "typedoc-neo-theme": "^1.1.1",
+    "typedoc-plugin-extras": "^1.1.8",
+    "typedoc-plugin-merge-modules": "^3.0.1",
     "typescript": "^4.4.2"
   },
   "resolutions": {
+    "glob-parent": "^6.0.1",
     "trim-off-newlines": "https://github.com/Samarium150/trim-off-newlines",
     "uuid": "^8.3.2"
   }

@@ -1,9 +1,7 @@
 /**
- * @packageDocumentation
  * @module utils
  */
-
-import {Functional} from "./types";
+import { Functional } from "./types";
 
 /**
  * The Class representing a square in QR code
@@ -16,7 +14,7 @@ class Module {
     /**
      * Create a new Module instance
      *
-     * @param color  The binary data represented by boolean
+     * @param color - The binary data represented by boolean
      */
     constructor(color?: boolean) {
         if (color) this.color = color;
@@ -25,7 +23,7 @@ class Module {
     /**
      * Set the color to a new value
      *
-     * @param value  The new color
+     * @param value - The new color
      */
     public setColor(value: boolean): void {this.color = value;}
 
@@ -48,8 +46,8 @@ class FunctionalModule extends Module {
     /**
      * Create a new FunctionModule instance
      *
-     * @param type  The type of the functionality
-     * @param color  The binary data represented by boolean
+     * @param type - The type of the functionality
+     * @param color - The binary data represented by boolean
      */
     constructor(type: Functional, color: boolean) {
         super(color);
