@@ -1,6 +1,6 @@
 {
   "name": "qr-ts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Create QR code on HTML canvas",
   "keywords": [
     "QR code"
@@ -49,6 +49,7 @@
   },
   "resolutions": {
     "glob-parent": "^6.0.1",
+    "set-value": "^4.1.0",
     "uuid": "^8.3.2"
   }
 }
