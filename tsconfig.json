@@ -100,9 +100,6 @@
   "typedocOptions": {
     "out": "dist/docs",
     "includeVersion": true,
-    "mergeModulesMergeMode": "module",
-    "hideDate": true,
-    "hideTime": true,
-    "theme": "node_modules/typedoc-neo-theme/bin/default"
+    "mergeModulesMergeMode": "module"
   }
 }
